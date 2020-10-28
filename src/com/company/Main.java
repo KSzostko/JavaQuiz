@@ -2,6 +2,9 @@ package com.company;
 
 import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -11,7 +14,10 @@ import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.TimeZone;
 
 public class Main {
 
@@ -20,92 +26,86 @@ public class Main {
 
         Screen screen = null;
         try {
-            Terminal terminal = defaultTerminalFactory.createTerminal();
-            screen = new TerminalScreen(terminal);
-
+            screen = defaultTerminalFactory.createScreen();
             screen.startScreen();
-            screen.setCursorPosition(null);
 
-            Random random = new Random();
-            TerminalSize terminalSize = screen.getTerminalSize();
-            for(int column = 0; column < terminalSize.getColumns(); column++) {
-                for(int row = 0; row < terminalSize.getRows(); row++) {
-                    screen.setCharacter(column, row, new TextCharacter(
-                            ' ',
-                            TextColor.ANSI.DEFAULT,
-                            TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)]
-                    ));
-                }
+            final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
+            final Window window = new BasicWindow("My Root Window");
+
+            Panel contentPanel = new Panel(new GridLayout(2));
+            GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+            gridLayout.setHorizontalSpacing(3);
+
+            Label title = new Label("This is a label that spans two columns");
+            title.setLayoutData(GridLayout.createLayoutData(
+                    GridLayout.Alignment.BEGINNING, // Horizontal alignment in the grid cell if the cell is larger than the component's preferred size
+                    GridLayout.Alignment.BEGINNING, // Vertical alignment in the grid cell if the cell is larger than the component's preferred size
+                    true,       // Give the component extra horizontal space if available
+                    false,        // Give the component extra vertical space if available
+                    2,                  // Horizontal span
+                    1));                  // Vertical span
+            contentPanel.addComponent(title);
+
+            contentPanel.addComponent(new Label("Text Box (aligned)"));
+            contentPanel.addComponent(
+                    new TextBox()
+                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING, GridLayout.Alignment.CENTER)));
+
+            contentPanel.addComponent(new Label("Password Box (right aligned)"));
+            contentPanel.addComponent(
+                    new TextBox()
+                            .setMask('*')
+                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.END, GridLayout.Alignment.CENTER)));
+
+            contentPanel.addComponent(new Label("Read-only Combo Box (forced size)"));
+            List<String> timezonesAsStrings = new ArrayList<String>();
+            for(String id: TimeZone.getAvailableIDs()) {
+                timezonesAsStrings.add(id);
             }
-            screen.refresh();
+            ComboBox<String> readOnlyComboBox = new ComboBox<String>(timezonesAsStrings);
+            readOnlyComboBox.setReadOnly(true);
+            readOnlyComboBox.setPreferredSize(new TerminalSize(20, 1));
+            contentPanel.addComponent(readOnlyComboBox);
 
-            long startTime = System.currentTimeMillis();
-            while(System.currentTimeMillis() - startTime < 2000) {
-                // the call to pollInput() is not blocking, unlike readInput()
-                if(screen.pollInput() != null) break;
+            contentPanel.addComponent(new Label("Editable Combo Box (filled)"));
+            contentPanel.addComponent(
+                    new ComboBox<String>("Item #1", "Item #2", "Item #3", "Item #4")
+                            .setReadOnly(false)
+                            .setLayoutData(GridLayout.createHorizontallyFilledLayoutData(1)));
 
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ignore) {
-                    break;
+            contentPanel.addComponent(new Label("Button (centered)"));
+            contentPanel.addComponent(new Button("Button", new Runnable() {
+                @Override
+                public void run() {
+                    MessageDialog.showMessageDialog(textGUI, "MessageBox", "This is a message box", MessageDialogButton.OK);
                 }
+            }).setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.CENTER, GridLayout.Alignment.CENTER)));
 
-                while(true) {
-                    KeyStroke keyStroke = screen.pollInput();
-                    if(keyStroke != null && (keyStroke.getKeyType() == KeyType.Escape || keyStroke.getKeyType() == KeyType.EOF)) break;
+            contentPanel.addComponent(
+                    new EmptySpace()
+                            .setLayoutData(
+                                    GridLayout.createHorizontallyFilledLayoutData(2)));
+            contentPanel.addComponent(
+                    new Separator(Direction.HORIZONTAL)
+                            .setLayoutData(
+                                    GridLayout.createHorizontallyFilledLayoutData(2)));
+            contentPanel.addComponent(
+                    new Button("Close", new Runnable() {
+                        @Override
+                        public void run() {
+                            window.close();
+                        }
+                    }).setLayoutData(
+                            GridLayout.createHorizontallyEndAlignedLayoutData(2)));
 
-                    TerminalSize newSize = screen.doResizeIfNecessary();
-                    if(newSize != null) {
-                        terminalSize = newSize;
-                    }
-
-                    final int charactersToModifyPerLoop = 1;
-                    for(int i = 0; i < charactersToModifyPerLoop; i++) {
-                        TerminalPosition cellToModify = new TerminalPosition(
-                                random.nextInt(terminalSize.getColumns()),
-                                random.nextInt(terminalSize.getRows())
-                        );
-                        TextColor.ANSI color = TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)];
-
-                        TextCharacter characterInBackBuffer = screen.getBackCharacter(cellToModify);
-                        characterInBackBuffer = characterInBackBuffer.withBackgroundColor(color);
-                        characterInBackBuffer = characterInBackBuffer.withCharacter(' ');
-                        screen.setCharacter(cellToModify, characterInBackBuffer);
-                    }
-
-                    String sizeLabel = "Terminal Size: " + terminalSize;
-                    TerminalPosition labelBoxTopLeft = new TerminalPosition(1, 1);
-                    TerminalSize labelBoxSize = new TerminalSize(sizeLabel.length() + 2, 3);
-                    TerminalPosition labelBoxTopRightCorner = labelBoxTopLeft.withRelativeColumn(labelBoxSize.getColumns() - 1);
-
-                    TextGraphics textGraphics = screen.newTextGraphics();
-                    textGraphics.fillRectangle(labelBoxTopLeft, labelBoxSize, ' ');
-                    textGraphics.drawLine(
-                            labelBoxTopLeft.withRelativeColumn(1),
-                            labelBoxTopLeft.withRelativeColumn(labelBoxSize.getColumns() - 2),
-                            Symbols.DOUBLE_LINE_HORIZONTAL);
-                    textGraphics.drawLine(
-                            labelBoxTopLeft.withRelativeRow(2).withRelativeColumn(1),
-                            labelBoxTopLeft.withRelativeRow(2).withRelativeColumn(labelBoxSize.getColumns() - 2),
-                            Symbols.DOUBLE_LINE_HORIZONTAL);
-                    textGraphics.setCharacter(labelBoxTopLeft, Symbols.DOUBLE_LINE_TOP_LEFT_CORNER);
-                    textGraphics.setCharacter(labelBoxTopLeft.withRelativeRow(1), Symbols.DOUBLE_LINE_VERTICAL);
-                    textGraphics.setCharacter(labelBoxTopLeft.withRelativeRow(2), Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER);
-                    textGraphics.setCharacter(labelBoxTopRightCorner, Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER);
-                    textGraphics.setCharacter(labelBoxTopRightCorner.withRelativeRow(1), Symbols.DOUBLE_LINE_VERTICAL);
-                    textGraphics.setCharacter(labelBoxTopRightCorner.withRelativeRow(2), Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER);
-                    textGraphics.putString(labelBoxTopLeft.withRelative(1, 1), sizeLabel);
-
-                    screen.refresh();
-                    Thread.yield();
-                }
-            }
+            window.setComponent(contentPanel);
+            textGUI.addWindowAndWait(window);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if(screen != null) {
                 try {
-                    screen.close();
+                    screen.stopScreen();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
