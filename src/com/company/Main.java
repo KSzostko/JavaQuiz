@@ -1,72 +1,111 @@
 package com.company;
 
-import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.*;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class Main {
 
     public static void main(String[] args) {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
 
-        Terminal terminal = null;
+        Screen screen = null;
         try {
-            terminal = defaultTerminalFactory.createTerminal();
-            terminal.enterPrivateMode();
-            terminal.clearScreen();
-            terminal.setCursorVisible(false);
+            Terminal terminal = defaultTerminalFactory.createTerminal();
+            screen = new TerminalScreen(terminal);
 
-            final TextGraphics textGraphics = terminal.newTextGraphics();
-            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
-            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
-            textGraphics.putString(2, 1, "Lanterna Tutorial 2 - Press ESC to exit", SGR.BOLD);
-            textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
-            textGraphics.setBackgroundColor(TextColor.ANSI.DEFAULT);
-            textGraphics.putString(5, 3, "Terminal Size: ", SGR.BOLD);
-            textGraphics.putString(5 + "Terminal Size: ".length(), 3, terminal.getTerminalSize().toString());
-            terminal.flush();
+            screen.startScreen();
+            screen.setCursorPosition(null);
 
-            terminal.addResizeListener(new TerminalResizeListener() {
-                @Override
-                public void onResized(Terminal terminal, TerminalSize terminalSize) {
-                    textGraphics.drawLine(5, 3, terminalSize.getColumns() - 1, 3, ' ');
-                    textGraphics.putString(5, 3, "Terminal Size: ", SGR.BOLD);
-                    textGraphics.putString(5 + "Terminal Size ".length(), 3, terminalSize.toString());
-
-                    try {
-                        terminal.flush();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+            Random random = new Random();
+            TerminalSize terminalSize = screen.getTerminalSize();
+            for(int column = 0; column < terminalSize.getColumns(); column++) {
+                for(int row = 0; row < terminalSize.getRows(); row++) {
+                    screen.setCharacter(column, row, new TextCharacter(
+                            ' ',
+                            TextColor.ANSI.DEFAULT,
+                            TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)]
+                    ));
                 }
-            });
+            }
+            screen.refresh();
 
-            textGraphics.putString(5, 4, "Last Keystroke: ", SGR.BOLD);
-            textGraphics.putString(5 + "Last Keystroke: ".length(), 4, "<Pending>");
-            terminal.flush();
+            long startTime = System.currentTimeMillis();
+            while(System.currentTimeMillis() - startTime < 2000) {
+                // the call to pollInput() is not blocking, unlike readInput()
+                if(screen.pollInput() != null) break;
 
-            KeyStroke keyStroke = terminal.readInput();
-            while(keyStroke.getKeyType() != KeyType.Escape) {
-                textGraphics.drawLine(5, 4, terminal.getTerminalSize().getColumns() - 1, 4, ' ');
-                textGraphics.putString(5, 4, "Last Keystroke: ", SGR.BOLD);
-                textGraphics.putString(5 + "Last Keystroke: ".length(), 4, keyStroke.toString());
-                terminal.flush();
-                keyStroke = terminal.readInput();
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ignore) {
+                    break;
+                }
+
+                while(true) {
+                    KeyStroke keyStroke = screen.pollInput();
+                    if(keyStroke != null && (keyStroke.getKeyType() == KeyType.Escape || keyStroke.getKeyType() == KeyType.EOF)) break;
+
+                    TerminalSize newSize = screen.doResizeIfNecessary();
+                    if(newSize != null) {
+                        terminalSize = newSize;
+                    }
+
+                    final int charactersToModifyPerLoop = 1;
+                    for(int i = 0; i < charactersToModifyPerLoop; i++) {
+                        TerminalPosition cellToModify = new TerminalPosition(
+                                random.nextInt(terminalSize.getColumns()),
+                                random.nextInt(terminalSize.getRows())
+                        );
+                        TextColor.ANSI color = TextColor.ANSI.values()[random.nextInt(TextColor.ANSI.values().length)];
+
+                        TextCharacter characterInBackBuffer = screen.getBackCharacter(cellToModify);
+                        characterInBackBuffer = characterInBackBuffer.withBackgroundColor(color);
+                        characterInBackBuffer = characterInBackBuffer.withCharacter(' ');
+                        screen.setCharacter(cellToModify, characterInBackBuffer);
+                    }
+
+                    String sizeLabel = "Terminal Size: " + terminalSize;
+                    TerminalPosition labelBoxTopLeft = new TerminalPosition(1, 1);
+                    TerminalSize labelBoxSize = new TerminalSize(sizeLabel.length() + 2, 3);
+                    TerminalPosition labelBoxTopRightCorner = labelBoxTopLeft.withRelativeColumn(labelBoxSize.getColumns() - 1);
+
+                    TextGraphics textGraphics = screen.newTextGraphics();
+                    textGraphics.fillRectangle(labelBoxTopLeft, labelBoxSize, ' ');
+                    textGraphics.drawLine(
+                            labelBoxTopLeft.withRelativeColumn(1),
+                            labelBoxTopLeft.withRelativeColumn(labelBoxSize.getColumns() - 2),
+                            Symbols.DOUBLE_LINE_HORIZONTAL);
+                    textGraphics.drawLine(
+                            labelBoxTopLeft.withRelativeRow(2).withRelativeColumn(1),
+                            labelBoxTopLeft.withRelativeRow(2).withRelativeColumn(labelBoxSize.getColumns() - 2),
+                            Symbols.DOUBLE_LINE_HORIZONTAL);
+                    textGraphics.setCharacter(labelBoxTopLeft, Symbols.DOUBLE_LINE_TOP_LEFT_CORNER);
+                    textGraphics.setCharacter(labelBoxTopLeft.withRelativeRow(1), Symbols.DOUBLE_LINE_VERTICAL);
+                    textGraphics.setCharacter(labelBoxTopLeft.withRelativeRow(2), Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER);
+                    textGraphics.setCharacter(labelBoxTopRightCorner, Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER);
+                    textGraphics.setCharacter(labelBoxTopRightCorner.withRelativeRow(1), Symbols.DOUBLE_LINE_VERTICAL);
+                    textGraphics.setCharacter(labelBoxTopRightCorner.withRelativeRow(2), Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER);
+                    textGraphics.putString(labelBoxTopLeft.withRelative(1, 1), sizeLabel);
+
+                    screen.refresh();
+                    Thread.yield();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(terminal != null) {
+            if(screen != null) {
                 try {
-                    terminal.close();
+                    screen.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
