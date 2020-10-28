@@ -1,10 +1,14 @@
 package com.company;
 
 import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.TerminalResizeListener;
 
 import java.io.IOException;
 
@@ -16,76 +20,48 @@ public class Main {
         Terminal terminal = null;
         try {
             terminal = defaultTerminalFactory.createTerminal();
-            terminal.putCharacter('H');
-            terminal.putCharacter('e');
-            terminal.putCharacter('l');
-            terminal.putCharacter('l');
-            terminal.putCharacter('o');
-            terminal.putCharacter('\n');
-            terminal.flush();
-            Thread.sleep(2000);
+            terminal.enterPrivateMode();
+            terminal.clearScreen();
+            terminal.setCursorVisible(false);
 
-            TerminalPosition startPosition = terminal.getCursorPosition();
-            terminal.setCursorPosition(startPosition.withRelativeColumn(3).withRelativeRow(2));
+            final TextGraphics textGraphics = terminal.newTextGraphics();
+            textGraphics.setForegroundColor(TextColor.ANSI.WHITE);
+            textGraphics.setBackgroundColor(TextColor.ANSI.BLACK);
+            textGraphics.putString(2, 1, "Lanterna Tutorial 2 - Press ESC to exit", SGR.BOLD);
+            textGraphics.setForegroundColor(TextColor.ANSI.DEFAULT);
+            textGraphics.setBackgroundColor(TextColor.ANSI.DEFAULT);
+            textGraphics.putString(5, 3, "Terminal Size: ", SGR.BOLD);
+            textGraphics.putString(5 + "Terminal Size: ".length(), 3, terminal.getTerminalSize().toString());
             terminal.flush();
-            Thread.sleep(2000);
 
-            terminal.setBackgroundColor(TextColor.ANSI.BLUE);
-            terminal.setForegroundColor(TextColor.ANSI.YELLOW);
-            terminal.putCharacter('Y');
-            terminal.putCharacter('e');
-            terminal.putCharacter('l');
-            terminal.putCharacter('l');
-            terminal.putCharacter('o');
-            terminal.putCharacter('w');
-            terminal.putCharacter(' ');
-            terminal.putCharacter('o');
-            terminal.putCharacter('n');
-            terminal.putCharacter(' ');
-            terminal.putCharacter('b');
-            terminal.putCharacter('l');
-            terminal.putCharacter('u');
-            terminal.putCharacter('e');
-            terminal.flush();
-            Thread.sleep(2000);
+            terminal.addResizeListener(new TerminalResizeListener() {
+                @Override
+                public void onResized(Terminal terminal, TerminalSize terminalSize) {
+                    textGraphics.drawLine(5, 3, terminalSize.getColumns() - 1, 3, ' ');
+                    textGraphics.putString(5, 3, "Terminal Size: ", SGR.BOLD);
+                    textGraphics.putString(5 + "Terminal Size ".length(), 3, terminalSize.toString());
 
-            // this will put cursor one row below the previous one,
-            // because the TerminalPosition class is immutable
-            terminal.setCursorPosition(startPosition.withRelativeColumn(3).withRelativeRow(3));
-            terminal.flush();
-            Thread.sleep(2000);
-            terminal.enableSGR(SGR.ITALIC);
-            terminal.putCharacter('Y');
-            terminal.putCharacter('e');
-            terminal.putCharacter('l');
-            terminal.putCharacter('l');
-            terminal.putCharacter('o');
-            terminal.putCharacter('w');
-            terminal.putCharacter(' ');
-            terminal.putCharacter('o');
-            terminal.putCharacter('n');
-            terminal.putCharacter(' ');
-            terminal.putCharacter('b');
-            terminal.putCharacter('l');
-            terminal.putCharacter('u');
-            terminal.putCharacter('e');
-            terminal.flush();
-            Thread.sleep(2000);
+                    try {
+                        terminal.flush();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
 
-            terminal.resetColorAndSGR();
-            terminal.setCursorPosition(terminal.getCursorPosition().withColumn(0).withRelativeRow(1));
-            terminal.putCharacter('D');
-            terminal.putCharacter('o');
-            terminal.putCharacter('n');
-            terminal.putCharacter('e');
-            terminal.putCharacter('\n');
+            textGraphics.putString(5, 4, "Last Keystroke: ", SGR.BOLD);
+            textGraphics.putString(5 + "Last Keystroke: ".length(), 4, "<Pending>");
             terminal.flush();
-            Thread.sleep(2000);
 
-            terminal.bell();
-            terminal.flush();
-            Thread.sleep(200);
-        } catch(IOException | InterruptedException e) {
+            KeyStroke keyStroke = terminal.readInput();
+            while(keyStroke.getKeyType() != KeyType.Escape) {
+                textGraphics.drawLine(5, 4, terminal.getTerminalSize().getColumns() - 1, 4, ' ');
+                textGraphics.putString(5, 4, "Last Keystroke: ", SGR.BOLD);
+                textGraphics.putString(5 + "Last Keystroke: ".length(), 4, keyStroke.toString());
+                terminal.flush();
+                keyStroke = terminal.readInput();
+            }
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
             if(terminal != null) {
