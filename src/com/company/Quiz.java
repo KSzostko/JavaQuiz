@@ -1,5 +1,6 @@
 package com.company;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,25 @@ public class Quiz {
     public Quiz(String type) {
         this.type = type;
         // question list will be retrieved from a file
+    }
+
+    public boolean loadQuestions() {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader("questions/" + type + ".txt"));
+
+            String fileLine;
+            while((fileLine = br.readLine()) != null) {
+                System.out.println(fileLine);
+                // @TODO how to input questions in files
+            }
+
+            return true;
+        } catch(IOException e) {
+            System.out.println("Reading from file error!");
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // mostly for testing for now
