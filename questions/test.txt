@@ -1,1 +1,12 @@
-Hello world!
+Dokad noca tupta jez?
+Do sklepu
+Do baru
+Przejsc sie
+Na strajk
+3
+Jaki jest najlepszy jezyk programowania?
+Python
+Java
+Assembler
+C
+2

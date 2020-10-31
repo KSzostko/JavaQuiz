@@ -10,7 +10,6 @@ public class Quiz {
 
     public Quiz(String type) {
         this.type = type;
-        // question list will be retrieved from a file
     }
 
     public boolean loadQuestions() {
@@ -18,10 +17,37 @@ public class Quiz {
         try {
             br = new BufferedReader(new FileReader("questions/" + type + ".txt"));
 
-            String fileLine;
+            String[] answers = new String[4];
+            String fileLine, questionText = "";
+            int lineCount = 0, i = 0, correctAnswer = -1;
+
             while((fileLine = br.readLine()) != null) {
-                System.out.println(fileLine);
-                // @TODO how to input questions in files
+                if(lineCount % 6 == 0) {
+                    if(lineCount != 0) {
+                        if(correctAnswer == -1) {
+                            System.out.println("Something went wrong");
+                            return false;
+                        }
+
+                        Question question = new Question(questionText, answers, correctAnswer);
+                        questions.add(question);
+                        answers = new String[4];
+                    }
+
+                    questionText = fileLine;
+                } else if(lineCount % 6 == 5) {
+                    i = 0;
+                    correctAnswer = Integer.parseInt(fileLine);
+                } else {
+                    answers[i] = fileLine;
+                    i++;
+                }
+                lineCount++;
+            }
+
+            if(lineCount != 0) {
+                Question question = new Question(questionText, answers, correctAnswer);
+                questions.add(question);
             }
 
             return true;
@@ -45,7 +71,7 @@ public class Quiz {
         result.append(typeString);
 
         for(Question question : questions) {
-            String questionString = "- " + question.getQuestionText() + "\n";
+            String questionString = "\t" + question + "\n";
             result.append(questionString);
         }
 

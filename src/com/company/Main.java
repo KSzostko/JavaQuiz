@@ -7,5 +7,6 @@ public class Main {
 //        textView.displayStartView();
         Quiz quiz = new Quiz("test");
         System.out.println(quiz.loadQuestions());
+        System.out.println(quiz);
     }
 }
