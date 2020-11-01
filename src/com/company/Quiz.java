@@ -77,4 +77,12 @@ public class Quiz {
 
         return result.toString();
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
 }
