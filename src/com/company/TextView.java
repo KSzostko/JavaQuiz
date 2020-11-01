@@ -9,6 +9,7 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
+import java.util.List;
 
 public class TextView extends View {
     @Override
@@ -73,9 +74,9 @@ public class TextView extends View {
 
             KeyStroke keyStroke = terminal.readInput();
             while(keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF
-                    && keyStroke.getCharacter() != 'e' && keyStroke.getCharacter() != 'E'
-                    && keyStroke.getCharacter() != 'n' && keyStroke.getCharacter() != 'N'
-                    && keyStroke.getCharacter() != 'l' && keyStroke.getCharacter() != 'L') {
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'e'
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'n'
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'l') {
                 keyStroke = terminal.readInput();
             }
 
@@ -110,7 +111,56 @@ public class TextView extends View {
 
     @Override
     public void displayLeadersView() {
+        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
 
+        Terminal terminal = null;
+        try {
+            terminal = defaultTerminalFactory.createTerminal();
+            TerminalSize terminalSize = terminal.getTerminalSize();
+            final TextGraphics textGraphics = terminal.newTextGraphics();
+
+            terminal.enterPrivateMode();
+            terminal.clearScreen();
+
+            textGraphics.putString(2, 2, "Leaderboard:");
+
+            Leaderboard leaderboard = new Leaderboard();
+            List<Score> ranking = leaderboard.getRanking();
+
+            for(int i = 0; i < ranking.size(); i++) {
+                Score score = ranking.get(i);
+                String scoreString = (i + 1) + ". " + score.getUsername() + " " + score.getQuizType() + " " + score.getPoints();
+                textGraphics.putString(2, 4 + i, scoreString);
+            }
+
+            terminal.setCursorPosition(2, terminalSize.getRows() - 2);
+            terminal.setForegroundColor(TextColor.ANSI.RED);
+            terminal.putCharacter('E');
+            terminal.setForegroundColor(TextColor.ANSI.DEFAULT);
+            terminal.putCharacter('x');
+            terminal.putCharacter('i');
+            terminal.putCharacter('t');
+
+            terminal.flush();
+
+            KeyStroke keyStroke = terminal.readInput();
+            while(keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'e') {
+                keyStroke = terminal.readInput();
+            }
+
+            terminal.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(terminal != null) {
+                try {
+                    terminal.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override

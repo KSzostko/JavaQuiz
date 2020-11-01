@@ -42,11 +42,6 @@ public class Leaderboard {
                 lineCount++;
             }
 
-            if(lineCount != 0) {
-                Score score = new Score(username, quizType, points);
-                ranking.add(score);
-            }
-
         } catch(IOException e) {
             e.printStackTrace();
             throw new Error("Ranking could not be loaded");
@@ -88,5 +83,9 @@ public class Leaderboard {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public List<Score> getRanking() {
+        return ranking;
     }
 }

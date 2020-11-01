@@ -7,5 +7,7 @@ public class Main {
 //        leaderboard.addScore(new Score("Ktos", "Test", 20000));
 //        leaderboard.addScore(new Score("asd", "nowy", 40000));
 //        leaderboard.addScore(new Score("asd", "nowy", 25000));
+        TextView textView = new TextView();
+        textView.displayLeadersView();
     }
 }
