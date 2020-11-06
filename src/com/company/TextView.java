@@ -165,7 +165,56 @@ public class TextView extends View {
 
     @Override
     public void displayQuestionView(Question question) {
+        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
 
+        Terminal terminal = null;
+        try {
+            terminal = defaultTerminalFactory.createTerminal();
+            TerminalSize terminalSize = terminal.getTerminalSize();
+            final TextGraphics textGraphics = terminal.newTextGraphics();
+
+            terminal.enterPrivateMode();
+            terminal.clearScreen();
+
+            String questionText = question.getQuestionText();
+
+            textGraphics.putString(4, 4, questionText);
+
+            String[] answers = question.getAnswers();
+            String answer1 = "A. " + answers[0];
+            String answer2 = "B. " + answers[1];
+            String answer3 = "C. " + answers[2];
+            String answer4 = "D. " + answers[3];
+
+            int maxLength = Integer.max(answer1.length(), answer3.length());
+
+            textGraphics.putString(4, 8, answer1);
+            textGraphics.putString(4 + maxLength + 4, 8, answer2);
+            textGraphics.putString(4, 10, answer3);
+            textGraphics.putString(4 + maxLength + 4, 10, answer4);
+
+            terminal.flush();
+
+            KeyStroke keyStroke = terminal.readInput();
+            while(keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'e'
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'n'
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'l') {
+                keyStroke = terminal.readInput();
+            }
+
+            terminal.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(terminal != null) {
+                try {
+                    terminal.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override

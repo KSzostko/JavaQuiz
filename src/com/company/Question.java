@@ -15,6 +15,10 @@ public class Question {
         return questionText;
     }
 
+    public String[] getAnswers() {
+        return answers;
+    }
+
     public int getCorrectAnswer() {
         return correctAnswer;
     }
