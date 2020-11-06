@@ -169,7 +169,53 @@ public class TextView extends View {
     }
 
     @Override
-    public void displayEndView() {
+    public void displayEndView(Score score) {
+        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
 
+        Terminal terminal = null;
+
+        try {
+            terminal = defaultTerminalFactory.createTerminal();
+            TerminalSize terminalSize = terminal.getTerminalSize();
+            final TextGraphics textGraphics = terminal.newTextGraphics();
+
+            terminal.enterPrivateMode();
+            terminal.clearScreen();
+
+            String congratsString = "Congratulations " + score.getUsername() + "!";
+            String pointsString = "You scored " + score.getPoints() + " points in the " + score.getQuizType() + " quiz!";
+            String newGame = "New Game";
+            String checkLeaders = "Check Leaderboards";
+            String exit = "Exit";
+
+            textGraphics.putString(terminalSize.getColumns() / 2 - congratsString.length() / 2, 4, congratsString);
+            textGraphics.putString(terminalSize.getColumns() / 2 - pointsString.length() / 2, 6, pointsString);
+
+            textGraphics.putString(terminalSize.getColumns() / 2 - newGame.length() / 2, 10, newGame);
+            textGraphics.putString(terminalSize.getColumns() / 2 - checkLeaders.length() / 2, 12, checkLeaders);
+            textGraphics.putString(terminalSize.getColumns() / 2 - exit.length() / 2, 14, exit);
+
+            terminal.flush();
+
+            KeyStroke keyStroke = terminal.readInput();
+            while(keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'e'
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'n'
+                    && Character.toLowerCase(keyStroke.getCharacter()) != 'l') {
+                keyStroke = terminal.readInput();
+            }
+
+            terminal.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(terminal != null) {
+                try {
+                    terminal.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
