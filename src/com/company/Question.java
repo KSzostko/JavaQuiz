@@ -15,6 +15,10 @@ public class Question {
         return questionText;
     }
 
+    public int getCorrectAnswer() {
+        return correctAnswer;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

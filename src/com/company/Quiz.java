@@ -7,8 +7,10 @@ import java.util.List;
 public class Quiz {
     private final String type;
     private List<Question> questions = new ArrayList<>();
+    private int currentQuestion;
 
     public Quiz(String type) {
+        this.currentQuestion = 0;
         this.type = type;
     }
 
@@ -58,9 +60,32 @@ public class Quiz {
         }
     }
 
+    public boolean checkAnswer(int answer) {
+        return answer == questions.get(currentQuestion).getCorrectAnswer();
+    }
+
+    public void nextQuestion() {
+        currentQuestion++;
+        if(currentQuestion == questions.size()) {
+            currentQuestion = -1;
+        }
+    }
+
     // mostly for testing for now
     public void addQuestion(Question question) {
         questions.add(question);
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public List<Question> getQuestions() {
+        return questions;
+    }
+
+    public int getCurrentQuestion() {
+        return currentQuestion;
     }
 
     @Override
@@ -76,13 +101,5 @@ public class Quiz {
         }
 
         return result.toString();
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public List<Question> getQuestions() {
-        return questions;
     }
 }
