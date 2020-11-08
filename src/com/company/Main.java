@@ -1,6 +1,8 @@
 package com.company;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.Theme;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
@@ -34,18 +36,34 @@ public class Main {
 
             MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
 
-            BasicWindow window = new BasicWindow("Hello World!");
+            Window window = new BasicWindow();
             window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
-            window.setHints(Arrays.asList(Window.Hint.NO_DECORATIONS));
 
             Panel contentPanel = new Panel();
-            LinearLayout linearLayout = new LinearLayout(Direction.HORIZONTAL);
-            LayoutData layoutData = LinearLayout.createLayoutData(LinearLayout.Alignment.Center);
-            contentPanel.setLayoutManager(linearLayout);
-            contentPanel.setLayoutData(layoutData);
+            contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
-            Button button = new Button("Przycisk");
+            LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
+            linearLayout.setSpacing(1);
 
+            Label welcomeLabel = new Label("Welcome to the Quiz App!");
+            welcomeLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(welcomeLabel);
+
+            contentPanel.addComponent(new EmptySpace());
+
+            Button button = new Button("New Game");
+            button.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(button);
+
+            Button button2 = new Button("Leaderboards");
+            button2.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(button2);
+
+            Button button3 = new Button("Exit");
+            button3.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(button3);
+
+            window.setComponent(contentPanel);
 
             gui.addWindowAndWait(window);
         } catch (IOException e) {
