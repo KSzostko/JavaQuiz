@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 //        Leaderboard leaderboard = new Leaderboard();
 //        leaderboard.addScore(new Score("Ktos", "Test", 20000));
 //        leaderboard.addScore(new Score("asd", "nowy", 40000));
@@ -23,33 +23,40 @@ public class Main {
         test1();
     }
 
-    public static void test1() throws IOException {
+    public static void test1() {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
 
-        Terminal terminal = defaultTerminalFactory.createTerminal();
-        Screen screen = new TerminalScreen(terminal);
-        screen.startScreen();
+        Terminal terminal = null;
+        try {
+            terminal = defaultTerminalFactory.createTerminal();
+            Screen screen = new TerminalScreen(terminal);
+            screen.startScreen();
 
-        BasicWindow window = new BasicWindow("Hello World!");
-        window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
-        window.setHints(Arrays.asList(Window.Hint.NO_DECORATIONS));
+            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
 
-        MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
+            BasicWindow window = new BasicWindow("Hello World!");
+            window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+            window.setHints(Arrays.asList(Window.Hint.NO_DECORATIONS));
 
-        Panel contentPanel = new Panel();
-        contentPanel.addComponent(new Label("Text Box"));
-        contentPanel.addComponent(new Button("Text Box"));
-        contentPanel.addComponent(new Button("Another one"));
+            Panel contentPanel = new Panel();
+            contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+
+            Button button = new Button("Przycisk");
+            contentPanel.addComponent(button, LinearLayout.createLayoutData(LinearLayout.Alignment.End));
+            window.setComponent(contentPanel);
 
 
-        window.setComponent(contentPanel);
-
-        BasicWindow window2 = new BasicWindow();
-        Panel contentPanel2 = new Panel();
-        contentPanel2.addComponent(new Button("Drugie okno"));
-        window2.setComponent(contentPanel2);
-
-        gui.addWindow(window);
-        gui.addWindowAndWait(window2);
+            gui.addWindowAndWait(window);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(terminal != null) {
+                try {
+                    terminal.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
