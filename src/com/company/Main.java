@@ -44,7 +44,12 @@ public class Main {
 
         window.setComponent(contentPanel);
 
-        gui.addWindowAndWait(window);
-        screen.refresh();
+        BasicWindow window2 = new BasicWindow();
+        Panel contentPanel2 = new Panel();
+        contentPanel2.addComponent(new Button("Drugie okno"));
+        window2.setComponent(contentPanel2);
+
+        gui.addWindow(window);
+        gui.addWindowAndWait(window2);
     }
 }
