@@ -39,11 +39,12 @@ public class Main {
             window.setHints(Arrays.asList(Window.Hint.NO_DECORATIONS));
 
             Panel contentPanel = new Panel();
-            contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+            LinearLayout linearLayout = new LinearLayout(Direction.HORIZONTAL);
+            LayoutData layoutData = LinearLayout.createLayoutData(LinearLayout.Alignment.Center);
+            contentPanel.setLayoutManager(linearLayout);
+            contentPanel.setLayoutData(layoutData);
 
             Button button = new Button("Przycisk");
-            contentPanel.addComponent(button, LinearLayout.createLayoutData(LinearLayout.Alignment.End));
-            window.setComponent(contentPanel);
 
 
             gui.addWindowAndWait(window);
