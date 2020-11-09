@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+// @TODO: objects for creating terminal should be fields
+
 public class TextView extends View {
     @Override
     public void displayStartView() {
@@ -199,39 +201,49 @@ public class TextView extends View {
         DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
 
         Terminal terminal = null;
-
         try {
             terminal = defaultTerminalFactory.createTerminal();
-            TerminalSize terminalSize = terminal.getTerminalSize();
-            final TextGraphics textGraphics = terminal.newTextGraphics();
+            Screen screen = new TerminalScreen(terminal);
+            screen.startScreen();
 
-            terminal.enterPrivateMode();
-            terminal.clearScreen();
+            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
+
+            Window window = new BasicWindow();
+            window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+
+            Panel contentPanel = new Panel();
+            contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+
+            LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
+            linearLayout.setSpacing(1);
 
             String congratsString = "Congratulations " + score.getUsername() + "!";
+            Label congratsLabel = new Label(congratsString);
+            congratsLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(congratsLabel);
+
             String pointsString = "You scored " + score.getPoints() + " points in the " + score.getQuizType() + " quiz!";
-            String newGame = "New Game";
-            String checkLeaders = "Check Leaderboards";
-            String exit = "Exit";
+            Label pointsLabel = new Label(pointsString);
+            pointsLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(pointsLabel);
 
-            textGraphics.putString(terminalSize.getColumns() / 2 - congratsString.length() / 2, 4, congratsString);
-            textGraphics.putString(terminalSize.getColumns() / 2 - pointsString.length() / 2, 6, pointsString);
+            contentPanel.addComponent(new EmptySpace());
 
-            textGraphics.putString(terminalSize.getColumns() / 2 - newGame.length() / 2, 10, newGame);
-            textGraphics.putString(terminalSize.getColumns() / 2 - checkLeaders.length() / 2, 12, checkLeaders);
-            textGraphics.putString(terminalSize.getColumns() / 2 - exit.length() / 2, 14, exit);
+            Button newGameButton = new Button("New Game");
+            newGameButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(newGameButton);
 
-            terminal.flush();
+            Button leadersButton = new Button("Check Leaderboard");
+            leadersButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(leadersButton);
 
-            KeyStroke keyStroke = terminal.readInput();
-            while(keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF
-                    && Character.toLowerCase(keyStroke.getCharacter()) != 'e'
-                    && Character.toLowerCase(keyStroke.getCharacter()) != 'n'
-                    && Character.toLowerCase(keyStroke.getCharacter()) != 'l') {
-                keyStroke = terminal.readInput();
-            }
+            Button exitButton = new Button("Exit");
+            exitButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(exitButton);
 
-            terminal.flush();
+            window.setComponent(contentPanel);
+
+            gui.addWindowAndWait(window);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
