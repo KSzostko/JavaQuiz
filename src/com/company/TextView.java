@@ -3,12 +3,16 @@ package com.company;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class TextView extends View {
@@ -19,83 +23,41 @@ public class TextView extends View {
         Terminal terminal = null;
         try {
             terminal = defaultTerminalFactory.createTerminal();
-            TerminalSize terminalSize = terminal.getTerminalSize();
-            final TextGraphics textGraphics = terminal.newTextGraphics();
+            Screen screen = new TerminalScreen(terminal);
+            screen.startScreen();
 
-            terminal.enterPrivateMode();
-            terminal.clearScreen();
+            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
 
-            String welcomeMessage = "Welcome to the Quiz App!";
-            String hintMessage = "Input red characters to select given option";
-            String newGame = "New Game";
-            String leaderboard = "Leaderboards";
-            String exit = "Exit";
+            Window window = new BasicWindow();
+            window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
 
-            textGraphics.putString(terminalSize.getColumns() / 2 - welcomeMessage.length() / 2, 5, welcomeMessage);
+            Panel contentPanel = new Panel();
+            contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
-            terminal.setCursorPosition(terminalSize.getColumns() / 2 - newGame.length() / 2, 8);
-            terminal.setForegroundColor(TextColor.ANSI.RED);
-            terminal.putCharacter('N');
-            terminal.setForegroundColor(TextColor.ANSI.DEFAULT);
-            terminal.putCharacter('e');
-            terminal.putCharacter('w');
-            terminal.putCharacter(' ');
-            terminal.putCharacter('G');
-            terminal.putCharacter('a');
-            terminal.putCharacter('m');
-            terminal.putCharacter('e');
+            LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
+            linearLayout.setSpacing(1);
 
-            terminal.setCursorPosition(terminalSize.getColumns() / 2 - leaderboard.length() / 2, 10);
-            terminal.setForegroundColor(TextColor.ANSI.RED);
-            terminal.putCharacter('L');
-            terminal.setForegroundColor(TextColor.ANSI.DEFAULT);
-            terminal.putCharacter('e');
-            terminal.putCharacter('a');
-            terminal.putCharacter('d');
-            terminal.putCharacter('e');
-            terminal.putCharacter('r');
-            terminal.putCharacter('b');
-            terminal.putCharacter('o');
-            terminal.putCharacter('a');
-            terminal.putCharacter('r');
-            terminal.putCharacter('d');
-            terminal.putCharacter('s');
+            Label welcomeLabel = new Label("Welcome to the Quiz App!");
+            welcomeLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(welcomeLabel);
 
-            terminal.setCursorPosition(terminalSize.getColumns() / 2 - exit.length() / 2, 12);
-            terminal.setForegroundColor(TextColor.ANSI.RED);
-            terminal.putCharacter('E');
-            terminal.setForegroundColor(TextColor.ANSI.DEFAULT);
-            terminal.putCharacter('x');
-            terminal.putCharacter('i');
-            terminal.putCharacter('t');
+            contentPanel.addComponent(new EmptySpace());
 
-            textGraphics.putString(terminalSize.getColumns() / 2 - hintMessage.length() / 2, 15, hintMessage);
-            terminal.flush();
+            Button button = new Button("New Game");
+            button.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(button);
 
-            KeyStroke keyStroke = terminal.readInput();
-            while(keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF
-                    && Character.toLowerCase(keyStroke.getCharacter()) != 'e'
-                    && Character.toLowerCase(keyStroke.getCharacter()) != 'n'
-                    && Character.toLowerCase(keyStroke.getCharacter()) != 'l') {
-                keyStroke = terminal.readInput();
-            }
+            Button button2 = new Button("Leaderboards");
+            button2.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(button2);
 
-            // this check can be done in game class
-            switch(keyStroke.getCharacter()) {
-                case 'n':
-                case 'N':
-                    // new game screen
-                    break;
-                case 'l':
-                case 'L':
-                    // leaderboard screen
-                    break;
-                case 'e':
-                case 'E':
-                    // exit game
-            }
+            Button button3 = new Button("Exit");
+            button3.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(button3);
 
-            terminal.flush();
+            window.setComponent(contentPanel);
+
+            gui.addWindowAndWait(window);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
