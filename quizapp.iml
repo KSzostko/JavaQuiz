@@ -23,6 +23,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="lanterna-3.0.4" level="project" />
+    <orderEntry type="library" name="lanterna-3.2.0-alpha1" level="project" />
   </component>
 </module>

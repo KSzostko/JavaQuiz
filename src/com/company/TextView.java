@@ -9,6 +9,11 @@ import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+import com.googlecode.lanterna.gui2.menu.Menu;
+import com.googlecode.lanterna.gui2.menu.MenuBar;
+import com.googlecode.lanterna.gui2.menu.MenuItem;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -16,7 +21,6 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -170,12 +174,8 @@ public class TextView extends View {
             gridLayout.setVerticalSpacing(1);
             gridLayout.setLeftMarginSize(10);
             gridLayout.setRightMarginSize(10);
-
-            // @TODO: Add simple nav on the top
-
-            // empty space for whole row require empty space in every row column
-            contentPanel.addComponent(new EmptySpace());
-            contentPanel.addComponent(new EmptySpace());
+            
+            addMenu(gui, contentPanel);
 
             Label questionTextLabel = new Label(question.getQuestionText());
             questionTextLabel.setLayoutData(GridLayout.createLayoutData(
@@ -194,13 +194,13 @@ public class TextView extends View {
             contentPanel.addComponent(new EmptySpace());
 
             // @TODO: Add timer
-            addMenu(contentPanel);
 
             String[] answers = question.getAnswers();
             String answer1 = "A." + answers[0];
             String answer2 = "B." + answers[1];
             String answer3 = "C." + answers[2];
             String answer4 = "D." + answers[3];
+            Button button = new Button("Dasda");
 
             contentPanel.addComponent(
                     new Button(answer1)
@@ -317,10 +317,69 @@ public class TextView extends View {
         }
     }
 
-    private void addMenu(Panel contentPanel) {
+    private void addMenu(MultiWindowTextGUI gui, Panel contentPanel) {
         MenuBar menuBar = new MenuBar();
 
-//        Menu menuOptions = new Menu("Options");
-//        menuBar.add(menuOptions);
+        Menu menuOptions = new Menu("Options");
+        menuBar.add(menuOptions);
+        menuOptions.add(new MenuItem("Restart", new Runnable() {
+            @Override
+            public void run() {
+                MessageDialog.showMessageDialog(gui, "Option", "Do you want to start a new game?", MessageDialogButton.OK);
+            }
+        }));
+        menuOptions.add(new MenuItem("End quiz", new Runnable() {
+            @Override
+            public void run() {
+                MessageDialog.showMessageDialog(gui, "Option", "Do you want to end your quiz?", MessageDialogButton.OK);
+            }
+        }));
+        menuOptions.add(new MenuItem("Exit", new Runnable() {
+            @Override
+            public void run() {
+                MessageDialog.showMessageDialog(gui, "Option", "Do you really wanna end now?", MessageDialogButton.OK);
+            }
+        }));
+
+        Menu menuHelp = new Menu("Hints");
+        menuBar.add(menuHelp);
+        menuHelp.add(new MenuItem("About", new Runnable() {
+            @Override
+            public void run() {
+                MessageDialog.showMessageDialog(gui, "Hint", "You can use every hint only once in the game",
+                        MessageDialogButton.OK);
+            }
+        }));
+        menuHelp.add(new MenuItem("50:50", new Runnable() {
+            @Override
+            public void run() {
+                MessageDialog.showMessageDialog(gui, "Hint", "Do you wish to use hint 50:50?",
+                        MessageDialogButton.OK);
+            }
+        }));
+        menuHelp.add(new MenuItem("Phone Expert", new Runnable() {
+            @Override
+            public void run() {
+                MessageDialog.showMessageDialog(gui, "Hint", "Do you wish to phone your quiz expert?",
+                        MessageDialogButton.OK);
+            }
+        }));
+        menuHelp.add(new MenuItem("Audience Choice", new Runnable() {
+            @Override
+            public void run() {
+                MessageDialog.showMessageDialog(gui, "Hint", "Do you wish to ask the audience for the answer?",
+                        MessageDialogButton.OK);
+            }
+        }));
+
+        menuBar.setLayoutData(GridLayout.createLayoutData(
+                GridLayout.Alignment.CENTER,
+                GridLayout.Alignment.BEGINNING,
+                true,
+                false,
+                2,
+                1
+        ));
+        contentPanel.addComponent(menuBar);
     }
 }
