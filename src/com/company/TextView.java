@@ -4,6 +4,11 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.Panel;
+import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -11,6 +16,7 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -188,6 +194,7 @@ public class TextView extends View {
             contentPanel.addComponent(new EmptySpace());
 
             // @TODO: Add timer
+            addMenu(contentPanel);
 
             String[] answers = question.getAnswers();
             String answer1 = "A." + answers[0];
@@ -308,5 +315,12 @@ public class TextView extends View {
                 }
             }
         }
+    }
+
+    private void addMenu(Panel contentPanel) {
+        MenuBar menuBar = new MenuBar();
+
+//        Menu menuOptions = new Menu("Options");
+//        menuBar.add(menuOptions);
     }
 }
