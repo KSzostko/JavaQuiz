@@ -149,40 +149,93 @@ public class TextView extends View {
         Terminal terminal = null;
         try {
             terminal = defaultTerminalFactory.createTerminal();
-            TerminalSize terminalSize = terminal.getTerminalSize();
-            final TextGraphics textGraphics = terminal.newTextGraphics();
+            Screen screen = new TerminalScreen(terminal);
+            screen.startScreen();
 
-            terminal.enterPrivateMode();
-            terminal.clearScreen();
+            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
 
-            String questionText = question.getQuestionText();
+            Window window = new BasicWindow();
+            window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
 
-            textGraphics.putString(4, 4, questionText);
+            Panel contentPanel = new Panel();
+            contentPanel.setLayoutManager(new GridLayout(2));
+
+            GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+            gridLayout.setVerticalSpacing(1);
+            gridLayout.setLeftMarginSize(10);
+            gridLayout.setRightMarginSize(10);
+
+            // @TODO: Add simple nav on the top
+
+            // empty space for whole row require empty space in every row column
+            contentPanel.addComponent(new EmptySpace());
+            contentPanel.addComponent(new EmptySpace());
+
+            Label questionTextLabel = new Label(question.getQuestionText());
+            questionTextLabel.setLayoutData(GridLayout.createLayoutData(
+                    GridLayout.Alignment.CENTER,
+                    GridLayout.Alignment.BEGINNING,
+                    true,
+                    false,
+                    2,
+                    1
+            ));
+            contentPanel.addComponent(questionTextLabel);
+
+            contentPanel.addComponent(new EmptySpace());
+            contentPanel.addComponent(new EmptySpace());
+            contentPanel.addComponent(new EmptySpace());
+            contentPanel.addComponent(new EmptySpace());
+
+            // @TODO: Add timer
 
             String[] answers = question.getAnswers();
-            String answer1 = "A. " + answers[0];
-            String answer2 = "B. " + answers[1];
-            String answer3 = "C. " + answers[2];
-            String answer4 = "D. " + answers[3];
+            String answer1 = "A." + answers[0];
+            String answer2 = "B." + answers[1];
+            String answer3 = "C." + answers[2];
+            String answer4 = "D." + answers[3];
 
-            int maxLength = Integer.max(answer1.length(), answer3.length());
+            contentPanel.addComponent(
+                    new Button(answer1)
+                    .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
+                            GridLayout.Alignment.BEGINNING,
+                            false,
+                            false,
+                            1,
+                            1))
+            );
+            contentPanel.addComponent(
+                    new Button(answer2)
+                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
+                                    GridLayout.Alignment.BEGINNING,
+                                    true,
+                                    false,
+                                    1,
+                                    1))
+            );
 
-            textGraphics.putString(4, 8, answer1);
-            textGraphics.putString(4 + maxLength + 4, 8, answer2);
-            textGraphics.putString(4, 10, answer3);
-            textGraphics.putString(4 + maxLength + 4, 10, answer4);
+            contentPanel.addComponent(
+                    new Button(answer3)
+                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
+                                    GridLayout.Alignment.BEGINNING,
+                                    false,
+                                    false,
+                                    1,
+                                    1))
+            );
+            contentPanel.addComponent(
+                    new Button(answer4)
+                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
+                                    GridLayout.Alignment.BEGINNING,
+                                    true,
+                                    false,
+                                    1,
+                                    1))
+            );
 
-            terminal.flush();
+            window.setComponent(contentPanel);
 
-            KeyStroke keyStroke = terminal.readInput();
-            while(keyStroke.getKeyType() != KeyType.Escape && keyStroke.getKeyType() != KeyType.EOF
-                    && Character.toLowerCase(keyStroke.getCharacter()) != 'e'
-                    && Character.toLowerCase(keyStroke.getCharacter()) != 'n'
-                    && Character.toLowerCase(keyStroke.getCharacter()) != 'l') {
-                keyStroke = terminal.readInput();
-            }
-
-            terminal.flush();
+            gui.addWindowAndWait(window);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
