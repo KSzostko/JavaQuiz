@@ -11,7 +11,7 @@ public class Main {
 //        Question question = new Question("TEST", new String[] { "tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos" }, 0);
 //        textView.displayQuestionView(question);
 //        textView.displayLeadersView();
-        textView.displayStartView();
+//        textView.displayStartView();
 //        textView.displayEndView(new Score("asd", "nowy", 25000));
     }
 }

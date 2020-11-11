@@ -54,6 +54,9 @@ public class TextView extends View {
             contentPanel = new Panel();
             mainWindow.setComponent(contentPanel);
 
+            displayStartView();
+
+            gui.addWindowAndWait(mainWindow);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -61,6 +64,7 @@ public class TextView extends View {
 
     @Override
     public void displayStartView() {
+        contentPanel = new Panel();
         contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
         LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
@@ -88,9 +92,15 @@ public class TextView extends View {
 
         Button button3 = new Button("Exit");
         button3.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        button3.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                endGame();
+            }
+        });
         contentPanel.addComponent(button3);
 
-        gui.addWindowAndWait(mainWindow);
+        mainWindow.setComponent(contentPanel);
     }
 
     @Override
@@ -129,8 +139,24 @@ public class TextView extends View {
         newGameButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         contentPanel.addComponent(newGameButton);
 
+        Button mainMenuButton = new Button("Main Menu");
+        mainMenuButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        mainMenuButton.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                displayStartView();
+            }
+        });
+        contentPanel.addComponent(mainMenuButton);
+
         Button exitButton = new Button("Exit");
         exitButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        exitButton.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                endGame();
+            }
+        });
         contentPanel.addComponent(exitButton);
 
         mainWindow.setComponent(contentPanel);
@@ -297,6 +323,16 @@ public class TextView extends View {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    private void endGame() {
+        if(screen != null) {
+            try {
+                screen.stopScreen();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
