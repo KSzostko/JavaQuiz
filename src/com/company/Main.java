@@ -8,9 +8,10 @@ public class Main {
 //        leaderboard.addScore(new Score("asd", "nowy", 40000));
 //        leaderboard.addScore(new Score("asd", "nowy", 25000));
         TextView textView = new TextView();
-        Question question = new Question("TEST", new String[] { "tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos" }, 0);
-        textView.displayQuestionView(question);
+//        Question question = new Question("TEST", new String[] { "tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos" }, 0);
+//        textView.displayQuestionView(question);
 //        textView.displayLeadersView();
+        textView.displayStartView();
 //        textView.displayEndView(new Score("asd", "nowy", 25000));
     }
 }

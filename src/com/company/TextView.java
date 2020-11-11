@@ -28,128 +28,112 @@ import java.util.List;
 // @TODO: objects for creating terminal should be fields
 
 public class TextView extends View {
-    @Override
-    public void displayStartView() {
-        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+    private final DefaultTerminalFactory defaultTerminalFactory;
+    private Terminal terminal;
+    private Screen screen;
+    private MultiWindowTextGUI gui;
+    private Window mainWindow;
+    private Panel contentPanel;
 
-        Terminal terminal = null;
+    public TextView() {
+        defaultTerminalFactory = new DefaultTerminalFactory();
+        initializeTerminal();
+    }
+
+    private void initializeTerminal() {
         try {
             terminal = defaultTerminalFactory.createTerminal();
-            Screen screen = new TerminalScreen(terminal);
+            screen = new TerminalScreen(terminal);
             screen.startScreen();
 
-            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
+            gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
 
-            Window window = new BasicWindow();
-            window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+            mainWindow = new BasicWindow();
+            mainWindow.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
 
-            Panel contentPanel = new Panel();
-            contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+            contentPanel = new Panel();
+            mainWindow.setComponent(contentPanel);
 
-            LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
-            linearLayout.setSpacing(1);
-
-            Label welcomeLabel = new Label("Welcome to the Quiz App!");
-            welcomeLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(welcomeLabel);
-
-            contentPanel.addComponent(new EmptySpace());
-
-            Button button = new Button("New Game");
-            button.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(button);
-
-            Button button2 = new Button("Leaderboards");
-            button2.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(button2);
-
-            Button button3 = new Button("Exit");
-            button3.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(button3);
-
-            window.setComponent(contentPanel);
-
-            gui.addWindowAndWait(window);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if(terminal != null) {
-                try {
-                    terminal.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
+    }
+
+    @Override
+    public void displayStartView() {
+        contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+
+        LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
+        linearLayout.setSpacing(1);
+
+        Label welcomeLabel = new Label("Welcome to the Quiz App!");
+        welcomeLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        contentPanel.addComponent(welcomeLabel);
+
+        contentPanel.addComponent(new EmptySpace());
+
+        Button button = new Button("New Game");
+        button.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        contentPanel.addComponent(button);
+
+        Button button2 = new Button("Leaderboards");
+        button2.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        button2.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                displayLeadersView();
+            }
+        });
+        contentPanel.addComponent(button2);
+
+        Button button3 = new Button("Exit");
+        button3.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        contentPanel.addComponent(button3);
+
+        gui.addWindowAndWait(mainWindow);
     }
 
     @Override
     public void displayLeadersView() {
         // @TODO: Change layout to Grid layout and create table with column names
-        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+        contentPanel = new Panel();
+        contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
-        Terminal terminal = null;
-        try {
-            terminal = defaultTerminalFactory.createTerminal();
-            Screen screen = new TerminalScreen(terminal);
-            screen.startScreen();
+        LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
+        linearLayout.setSpacing(1);
 
-            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
+        Label leaderLabel = new Label("Leaderboard");
+        leaderLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        contentPanel.addComponent(leaderLabel);
 
-            Window window = new BasicWindow();
-            window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+        contentPanel.addComponent(new EmptySpace());
 
-            Panel contentPanel = new Panel();
-            contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        Button button = new Button("New Game");
 
-            LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
-            linearLayout.setSpacing(1);
+        Leaderboard leaderboard = new Leaderboard();
+        List<Score> ranking = leaderboard.getRanking();
 
-            Label leaderLabel = new Label("Leaderboard");
-            leaderLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(leaderLabel);
+        for (int i = 0; i < ranking.size(); i++) {
+            Score score = ranking.get(i);
+            String scoreString = (i + 1) + ". " + score.getUsername() + " " + score.getQuizType() + " " + score.getPoints();
 
-            contentPanel.addComponent(new EmptySpace());
-
-            Button button = new Button("New Game");
-
-            Leaderboard leaderboard = new Leaderboard();
-            List<Score> ranking = leaderboard.getRanking();
-
-            for(int i = 0; i < ranking.size(); i++) {
-                Score score = ranking.get(i);
-                String scoreString = (i + 1) + ". " + score.getUsername() + " " + score.getQuizType() + " " + score.getPoints();
-
-                Label scoreLabel = new Label(scoreString);
-                // @TODO: Maybe extract method for these 2 lines
-                scoreLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-                contentPanel.addComponent(scoreLabel);
-            }
-
-            contentPanel.addComponent(new EmptySpace());
-
-            Button newGameButton = new Button("New Game");
-            newGameButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(newGameButton);
-
-            Button exitButton = new Button("Exit");
-            exitButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(exitButton);
-
-            window.setComponent(contentPanel);
-
-            gui.addWindowAndWait(window);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if(terminal != null) {
-                try {
-                    terminal.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            Label scoreLabel = new Label(scoreString);
+            // @TODO: Maybe extract method for these 2 lines
+            scoreLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+            contentPanel.addComponent(scoreLabel);
         }
+
+        contentPanel.addComponent(new EmptySpace());
+
+        Button newGameButton = new Button("New Game");
+        newGameButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        contentPanel.addComponent(newGameButton);
+
+        Button exitButton = new Button("Exit");
+        exitButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        contentPanel.addComponent(exitButton);
+
+        mainWindow.setComponent(contentPanel);
     }
 
     @Override
@@ -174,7 +158,7 @@ public class TextView extends View {
             gridLayout.setVerticalSpacing(1);
             gridLayout.setLeftMarginSize(10);
             gridLayout.setRightMarginSize(10);
-            
+
             addMenu(gui, contentPanel);
 
             Label questionTextLabel = new Label(question.getQuestionText());
@@ -204,12 +188,12 @@ public class TextView extends View {
 
             contentPanel.addComponent(
                     new Button(answer1)
-                    .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
-                            GridLayout.Alignment.BEGINNING,
-                            false,
-                            false,
-                            1,
-                            1))
+                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
+                                    GridLayout.Alignment.BEGINNING,
+                                    false,
+                                    false,
+                                    1,
+                                    1))
             );
             contentPanel.addComponent(
                     new Button(answer2)
@@ -246,7 +230,7 @@ public class TextView extends View {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(terminal != null) {
+            if (terminal != null) {
                 try {
                     terminal.close();
                 } catch (IOException e) {
@@ -307,7 +291,7 @@ public class TextView extends View {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(terminal != null) {
+            if (terminal != null) {
                 try {
                     terminal.close();
                 } catch (IOException e) {
