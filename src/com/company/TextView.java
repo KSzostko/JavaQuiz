@@ -78,6 +78,14 @@ public class TextView extends View {
 
         Button button = new Button("New Game");
         button.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        button.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                // @TODO: first user should be able to choose quiz type which he wants
+                // for nav testing now
+                displayQuestionView(new Question("TEST", new String[] { "tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos" }, 0));
+            }
+        });
         contentPanel.addComponent(button);
 
         Button button2 = new Button("Leaderboards");
@@ -118,8 +126,6 @@ public class TextView extends View {
 
         contentPanel.addComponent(new EmptySpace());
 
-        Button button = new Button("New Game");
-
         Leaderboard leaderboard = new Leaderboard();
         List<Score> ranking = leaderboard.getRanking();
 
@@ -137,6 +143,13 @@ public class TextView extends View {
 
         Button newGameButton = new Button("New Game");
         newGameButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        newGameButton.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                // for nav testing now
+                displayQuestionView(new Question("TEST", new String[] { "tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos" }, 0));
+            }
+        });
         contentPanel.addComponent(newGameButton);
 
         Button mainMenuButton = new Button("Main Menu");
@@ -164,106 +177,79 @@ public class TextView extends View {
 
     @Override
     public void displayQuestionView(Question question) {
-        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+        Panel contentPanel = new Panel();
+        contentPanel.setLayoutManager(new GridLayout(2));
 
-        Terminal terminal = null;
-        try {
-            terminal = defaultTerminalFactory.createTerminal();
-            Screen screen = new TerminalScreen(terminal);
-            screen.startScreen();
+        GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+        gridLayout.setVerticalSpacing(1);
+        gridLayout.setLeftMarginSize(10);
+        gridLayout.setRightMarginSize(10);
 
-            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
+        addMenu(gui, contentPanel);
 
-            Window window = new BasicWindow();
-            window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+        Label questionTextLabel = new Label(question.getQuestionText());
+        questionTextLabel.setLayoutData(GridLayout.createLayoutData(
+                GridLayout.Alignment.CENTER,
+                GridLayout.Alignment.BEGINNING,
+                true,
+                false,
+                2,
+                1
+        ));
+        contentPanel.addComponent(questionTextLabel);
 
-            Panel contentPanel = new Panel();
-            contentPanel.setLayoutManager(new GridLayout(2));
+        contentPanel.addComponent(new EmptySpace());
+        contentPanel.addComponent(new EmptySpace());
+        contentPanel.addComponent(new EmptySpace());
+        contentPanel.addComponent(new EmptySpace());
 
-            GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
-            gridLayout.setVerticalSpacing(1);
-            gridLayout.setLeftMarginSize(10);
-            gridLayout.setRightMarginSize(10);
+        // @TODO: Add timer
 
-            addMenu(gui, contentPanel);
+        String[] answers = question.getAnswers();
+        String answer1 = "A." + answers[0];
+        String answer2 = "B." + answers[1];
+        String answer3 = "C." + answers[2];
+        String answer4 = "D." + answers[3];
 
-            Label questionTextLabel = new Label(question.getQuestionText());
-            questionTextLabel.setLayoutData(GridLayout.createLayoutData(
-                    GridLayout.Alignment.CENTER,
-                    GridLayout.Alignment.BEGINNING,
-                    true,
-                    false,
-                    2,
-                    1
-            ));
-            contentPanel.addComponent(questionTextLabel);
+        contentPanel.addComponent(
+                new Button(answer1)
+                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
+                                GridLayout.Alignment.BEGINNING,
+                                false,
+                                false,
+                                1,
+                                1))
+        );
+        contentPanel.addComponent(
+                new Button(answer2)
+                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
+                                GridLayout.Alignment.BEGINNING,
+                                true,
+                                false,
+                                1,
+                                1))
+        );
 
-            contentPanel.addComponent(new EmptySpace());
-            contentPanel.addComponent(new EmptySpace());
-            contentPanel.addComponent(new EmptySpace());
-            contentPanel.addComponent(new EmptySpace());
+        contentPanel.addComponent(
+                new Button(answer3)
+                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
+                                GridLayout.Alignment.BEGINNING,
+                                false,
+                                false,
+                                1,
+                                1))
+        );
+        contentPanel.addComponent(
+                new Button(answer4)
+                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
+                                GridLayout.Alignment.BEGINNING,
+                                true,
+                                false,
+                                1,
+                                1))
+        );
 
-            // @TODO: Add timer
-
-            String[] answers = question.getAnswers();
-            String answer1 = "A." + answers[0];
-            String answer2 = "B." + answers[1];
-            String answer3 = "C." + answers[2];
-            String answer4 = "D." + answers[3];
-            Button button = new Button("Dasda");
-
-            contentPanel.addComponent(
-                    new Button(answer1)
-                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
-                                    GridLayout.Alignment.BEGINNING,
-                                    false,
-                                    false,
-                                    1,
-                                    1))
-            );
-            contentPanel.addComponent(
-                    new Button(answer2)
-                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
-                                    GridLayout.Alignment.BEGINNING,
-                                    true,
-                                    false,
-                                    1,
-                                    1))
-            );
-
-            contentPanel.addComponent(
-                    new Button(answer3)
-                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
-                                    GridLayout.Alignment.BEGINNING,
-                                    false,
-                                    false,
-                                    1,
-                                    1))
-            );
-            contentPanel.addComponent(
-                    new Button(answer4)
-                            .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
-                                    GridLayout.Alignment.BEGINNING,
-                                    true,
-                                    false,
-                                    1,
-                                    1))
-            );
-
-            window.setComponent(contentPanel);
-
-            gui.addWindowAndWait(window);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (terminal != null) {
-                try {
-                    terminal.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        mainWindow.setComponent(contentPanel);
     }
 
     @Override
@@ -328,7 +314,7 @@ public class TextView extends View {
     }
 
     private void endGame() {
-        if(screen != null) {
+        if (screen != null) {
             try {
                 screen.stopScreen();
             } catch (IOException e) {
