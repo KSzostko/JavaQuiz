@@ -83,7 +83,7 @@ public class TextView extends View {
             public void onTriggered(Button button) {
                 // @TODO: first user should be able to choose quiz type which he wants
                 // for nav testing now
-                displayQuestionView(new Question("TEST", new String[] { "tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos" }, 0));
+                displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
             }
         });
         contentPanel.addComponent(button);
@@ -147,7 +147,7 @@ public class TextView extends View {
             @Override
             public void onTriggered(Button button) {
                 // for nav testing now
-                displayQuestionView(new Question("TEST", new String[] { "tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos" }, 0));
+                displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
             }
         });
         contentPanel.addComponent(newGameButton);
@@ -254,63 +254,56 @@ public class TextView extends View {
 
     @Override
     public void displayEndView(Score score) {
-        DefaultTerminalFactory defaultTerminalFactory = new DefaultTerminalFactory();
+        Panel contentPanel = new Panel();
+        contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
-        Terminal terminal = null;
-        try {
-            terminal = defaultTerminalFactory.createTerminal();
-            Screen screen = new TerminalScreen(terminal);
-            screen.startScreen();
+        LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
+        linearLayout.setSpacing(1);
 
-            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLACK));
+        String congratsString = "Congratulations " + score.getUsername() + "!";
+        Label congratsLabel = new Label(congratsString);
+        congratsLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        contentPanel.addComponent(congratsLabel);
 
-            Window window = new BasicWindow();
-            window.setHints(Arrays.asList(Window.Hint.FULL_SCREEN));
+        String pointsString = "You scored " + score.getPoints() + " points in the " + score.getQuizType() + " quiz!";
+        Label pointsLabel = new Label(pointsString);
+        pointsLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        contentPanel.addComponent(pointsLabel);
 
-            Panel contentPanel = new Panel();
-            contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        contentPanel.addComponent(new EmptySpace());
 
-            LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
-            linearLayout.setSpacing(1);
-
-            String congratsString = "Congratulations " + score.getUsername() + "!";
-            Label congratsLabel = new Label(congratsString);
-            congratsLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(congratsLabel);
-
-            String pointsString = "You scored " + score.getPoints() + " points in the " + score.getQuizType() + " quiz!";
-            Label pointsLabel = new Label(pointsString);
-            pointsLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(pointsLabel);
-
-            contentPanel.addComponent(new EmptySpace());
-
-            Button newGameButton = new Button("New Game");
-            newGameButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(newGameButton);
-
-            Button leadersButton = new Button("Check Leaderboard");
-            leadersButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(leadersButton);
-
-            Button exitButton = new Button("Exit");
-            exitButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(exitButton);
-
-            window.setComponent(contentPanel);
-
-            gui.addWindowAndWait(window);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (terminal != null) {
-                try {
-                    terminal.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        Button newGameButton = new Button("New Game");
+        newGameButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        newGameButton.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                // for nav testing now
+                displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
             }
-        }
+        });
+        contentPanel.addComponent(newGameButton);
+
+        Button leadersButton = new Button("Check Leaderboard");
+        leadersButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        leadersButton.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                displayLeadersView();
+            }
+        });
+        contentPanel.addComponent(leadersButton);
+
+        Button exitButton = new Button("Exit");
+        exitButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        exitButton.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                endGame();
+            }
+        });
+        contentPanel.addComponent(exitButton);
+
+        mainWindow.setComponent(contentPanel);
     }
 
     private void endGame() {
@@ -331,19 +324,25 @@ public class TextView extends View {
         menuOptions.add(new MenuItem("Restart", new Runnable() {
             @Override
             public void run() {
-                MessageDialog.showMessageDialog(gui, "Option", "Do you want to start a new game?", MessageDialogButton.OK);
+                // @TODO: add message dialog where you choose yes no
+//                MessageDialog.showMessageDialog(gui, "Option", "Do you want to start a new game?", MessageDialogButton.OK);
+                // for nav testing now
+                displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
             }
         }));
         menuOptions.add(new MenuItem("End quiz", new Runnable() {
             @Override
             public void run() {
-                MessageDialog.showMessageDialog(gui, "Option", "Do you want to end your quiz?", MessageDialogButton.OK);
+//                MessageDialog.showMessageDialog(gui, "Option", "Do you want to end your quiz?", MessageDialogButton.OK);
+                // for nav testing for now
+                displayEndView(new Score("asd", "nowy", 25000));
             }
         }));
         menuOptions.add(new MenuItem("Exit", new Runnable() {
             @Override
             public void run() {
-                MessageDialog.showMessageDialog(gui, "Option", "Do you really wanna end now?", MessageDialogButton.OK);
+//                MessageDialog.showMessageDialog(gui, "Option", "Do you really wanna end now?", MessageDialogButton.OK);
+                endGame();
             }
         }));
 
