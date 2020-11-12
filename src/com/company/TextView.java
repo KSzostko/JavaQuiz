@@ -108,6 +108,11 @@ public class TextView extends View {
     }
 
     @Override
+    public void displayQuizTypeView() {
+
+    }
+
+    @Override
     public void displayLeadersView() {
         // @TODO: Change layout to Grid layout and create table with column names
         contentPanel = new Panel();

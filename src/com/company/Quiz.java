@@ -1,8 +1,12 @@
 package com.company;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class Quiz {
     private final String type;
@@ -12,6 +16,26 @@ public class Quiz {
     public Quiz(String type) {
         this.currentQuestion = 0;
         this.type = type;
+    }
+
+    public static List<String> getTypes() {
+        List<String> files = new ArrayList<>();
+
+        try(Stream<Path> paths = Files.walk(Paths.get("questions"))) {
+            paths.forEach(filePath -> {
+                if(Files.isRegularFile(filePath)) {
+                    String fileString = filePath.toString();
+                    fileString = fileString.substring(10).replaceAll(".txt", "");
+
+                    files.add(fileString);
+                    System.out.println(fileString);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return files;
     }
 
     public boolean loadQuestions() {
