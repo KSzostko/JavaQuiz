@@ -71,12 +71,12 @@ public class TextView extends View {
         linearLayout.setSpacing(1);
 
         Label welcomeLabel = new Label("Welcome to the Quiz App!");
-        addLinearCenteredComponent(welcomeLabel);
+        addLinearCenteredComponent(contentPanel, welcomeLabel);
 
-        addEmptySpace(1);
+        addEmptySpace(contentPanel, 1);
 
         Button button = new Button("New Game");
-        addLinearCenteredComponent(button);
+        addLinearCenteredComponent(contentPanel, button);
         button.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -87,7 +87,7 @@ public class TextView extends View {
         });
 
         Button button2 = new Button("Leaderboards");
-        addLinearCenteredComponent(button2);
+        addLinearCenteredComponent(contentPanel, button2);
         button2.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -96,7 +96,7 @@ public class TextView extends View {
         });
 
         Button button3 = new Button("Exit");
-        addLinearCenteredComponent(button3);
+        addLinearCenteredComponent(contentPanel, button3);
         button3.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -117,9 +117,9 @@ public class TextView extends View {
         linearLayout.setSpacing(1);
 
         Label leaderLabel = new Label("Leaderboard");
-        addLinearCenteredComponent(leaderLabel);
+        addLinearCenteredComponent(contentPanel, leaderLabel);
 
-        addEmptySpace(1);
+        addEmptySpace(contentPanel, 1);
 
         Leaderboard leaderboard = new Leaderboard();
         List<Score> ranking = leaderboard.getRanking();
@@ -129,13 +129,13 @@ public class TextView extends View {
             String scoreString = (i + 1) + ". " + score.getUsername() + " " + score.getQuizType() + " " + score.getPoints();
 
             Label scoreLabel = new Label(scoreString);
-            addLinearCenteredComponent(scoreLabel);
+            addLinearCenteredComponent(contentPanel, scoreLabel);
         }
 
-        addEmptySpace(1);
+        addEmptySpace(contentPanel, 1);
 
         Button newGameButton = new Button("New Game");
-        addLinearCenteredComponent(newGameButton);
+        addLinearCenteredComponent(contentPanel, newGameButton);
         newGameButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -145,7 +145,7 @@ public class TextView extends View {
         });
 
         Button mainMenuButton = new Button("Main Menu");
-        addLinearCenteredComponent(mainMenuButton);
+        addLinearCenteredComponent(contentPanel, mainMenuButton);
         mainMenuButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -154,7 +154,7 @@ public class TextView extends View {
         });
 
         Button exitButton = new Button("Exit");
-        addLinearCenteredComponent(exitButton);
+        addLinearCenteredComponent(contentPanel, exitButton);
         exitButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -178,17 +178,9 @@ public class TextView extends View {
         addMenu(gui, contentPanel);
 
         Label questionTextLabel = new Label(question.getQuestionText());
-        questionTextLabel.setLayoutData(GridLayout.createLayoutData(
-                GridLayout.Alignment.CENTER,
-                GridLayout.Alignment.BEGINNING,
-                true,
-                false,
-                2,
-                1
-        ));
-        contentPanel.addComponent(questionTextLabel);
+        addGridComponent(contentPanel,questionTextLabel,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1);
 
-        addEmptySpace(4);
+        addEmptySpace(contentPanel, 4);
 
         // @TODO: Add timer
 
@@ -198,43 +190,17 @@ public class TextView extends View {
         String answer3 = "C." + answers[2];
         String answer4 = "D." + answers[3];
 
-        contentPanel.addComponent(
-                new Button(answer1)
-                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
-                                GridLayout.Alignment.BEGINNING,
-                                false,
-                                false,
-                                1,
-                                1))
-        );
-        contentPanel.addComponent(
-                new Button(answer2)
-                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
-                                GridLayout.Alignment.BEGINNING,
-                                true,
-                                false,
-                                1,
-                                1))
-        );
+        Button button1 = new Button(answer1);
+        addGridComponent(contentPanel,button1,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,false,false,1,1);
 
-        contentPanel.addComponent(
-                new Button(answer3)
-                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
-                                GridLayout.Alignment.BEGINNING,
-                                false,
-                                false,
-                                1,
-                                1))
-        );
-        contentPanel.addComponent(
-                new Button(answer4)
-                        .setLayoutData(GridLayout.createLayoutData(GridLayout.Alignment.BEGINNING,
-                                GridLayout.Alignment.BEGINNING,
-                                true,
-                                false,
-                                1,
-                                1))
-        );
+        Button button2 = new Button(answer2);
+        addGridComponent(contentPanel,button2,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,true,false,1,1);
+
+        Button button3 = new Button(answer3);
+        addGridComponent(contentPanel,button3,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,false,false,1,1);
+
+        Button button4 = new Button(answer4);
+        addGridComponent(contentPanel,button4,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,true,false,1,1);
 
         mainWindow.setComponent(contentPanel);
     }
@@ -249,16 +215,16 @@ public class TextView extends View {
 
         String congratsString = "Congratulations " + score.getUsername() + "!";
         Label congratsLabel = new Label(congratsString);
-        addLinearCenteredComponent(congratsLabel);
+        addLinearCenteredComponent(contentPanel, congratsLabel);
 
         String pointsString = "You scored " + score.getPoints() + " points in the " + score.getQuizType() + " quiz!";
         Label pointsLabel = new Label(pointsString);
-        addLinearCenteredComponent(pointsLabel);
+        addLinearCenteredComponent(contentPanel, pointsLabel);
 
-        addEmptySpace(1);
+        addEmptySpace(contentPanel, 1);
 
         Button newGameButton = new Button("New Game");
-        addLinearCenteredComponent(newGameButton);
+        addLinearCenteredComponent(contentPanel, newGameButton);
         newGameButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -268,7 +234,7 @@ public class TextView extends View {
         });
 
         Button leadersButton = new Button("Check Leaderboard");
-        addLinearCenteredComponent(leadersButton);
+        addLinearCenteredComponent(contentPanel, leadersButton);
         leadersButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -277,7 +243,7 @@ public class TextView extends View {
         });
 
         Button exitButton = new Button("Exit");
-        addLinearCenteredComponent(exitButton);
+        addLinearCenteredComponent(contentPanel, exitButton);
         exitButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -359,25 +325,23 @@ public class TextView extends View {
             }
         }));
 
-        menuBar.setLayoutData(GridLayout.createLayoutData(
-                GridLayout.Alignment.CENTER,
-                GridLayout.Alignment.BEGINNING,
-                true,
-                false,
-                2,
-                1
-        ));
-        contentPanel.addComponent(menuBar);
+        addGridComponent(contentPanel,menuBar,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1);
     }
 
-    private void addLinearCenteredComponent(Component component) {
-        contentPanel.addComponent(component);
+    private void addLinearCenteredComponent(Panel panel, Component component) {
+        panel.addComponent(component);
         component.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
     }
 
-    private void addEmptySpace(int count) {
+    private void addGridComponent(Panel panel, Component comp, GridLayout.Alignment alignHor, GridLayout.Alignment alignVer, boolean grabHor,
+                                  boolean grabVer, int horSpan, int verSpan) {
+        panel.addComponent(comp);
+        comp.setLayoutData(GridLayout.createLayoutData(alignHor, alignVer, grabHor, grabVer, horSpan, verSpan));
+    }
+
+    private void addEmptySpace(Panel panel, int count) {
         for(int i = 0; i < count; i++) {
-            contentPanel.addComponent(new EmptySpace());
+            panel.addComponent(new EmptySpace());
         }
     }
 }
