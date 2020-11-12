@@ -71,13 +71,12 @@ public class TextView extends View {
         linearLayout.setSpacing(1);
 
         Label welcomeLabel = new Label("Welcome to the Quiz App!");
-        welcomeLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        contentPanel.addComponent(welcomeLabel);
+        addLinearCenteredComponent(welcomeLabel);
 
         contentPanel.addComponent(new EmptySpace());
 
         Button button = new Button("New Game");
-        button.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        addLinearCenteredComponent(button);
         button.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -86,27 +85,24 @@ public class TextView extends View {
                 displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
             }
         });
-        contentPanel.addComponent(button);
 
         Button button2 = new Button("Leaderboards");
-        button2.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        addLinearCenteredComponent(button2);
         button2.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
                 displayLeadersView();
             }
         });
-        contentPanel.addComponent(button2);
 
         Button button3 = new Button("Exit");
-        button3.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        addLinearCenteredComponent(button3);
         button3.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
                 endGame();
             }
         });
-        contentPanel.addComponent(button3);
 
         mainWindow.setComponent(contentPanel);
     }
@@ -121,8 +117,7 @@ public class TextView extends View {
         linearLayout.setSpacing(1);
 
         Label leaderLabel = new Label("Leaderboard");
-        leaderLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        contentPanel.addComponent(leaderLabel);
+        addLinearCenteredComponent(leaderLabel);
 
         contentPanel.addComponent(new EmptySpace());
 
@@ -134,15 +129,13 @@ public class TextView extends View {
             String scoreString = (i + 1) + ". " + score.getUsername() + " " + score.getQuizType() + " " + score.getPoints();
 
             Label scoreLabel = new Label(scoreString);
-            // @TODO: Maybe extract method for these 2 lines
-            scoreLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            contentPanel.addComponent(scoreLabel);
+            addLinearCenteredComponent(scoreLabel);
         }
 
         contentPanel.addComponent(new EmptySpace());
 
         Button newGameButton = new Button("New Game");
-        newGameButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        addLinearCenteredComponent(newGameButton);
         newGameButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -150,27 +143,24 @@ public class TextView extends View {
                 displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
             }
         });
-        contentPanel.addComponent(newGameButton);
 
         Button mainMenuButton = new Button("Main Menu");
-        mainMenuButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        addLinearCenteredComponent(mainMenuButton);
         mainMenuButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
                 displayStartView();
             }
         });
-        contentPanel.addComponent(mainMenuButton);
 
         Button exitButton = new Button("Exit");
-        exitButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        addLinearCenteredComponent(exitButton);
         exitButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
                 endGame();
             }
         });
-        contentPanel.addComponent(exitButton);
 
         mainWindow.setComponent(contentPanel);
     }
@@ -262,18 +252,16 @@ public class TextView extends View {
 
         String congratsString = "Congratulations " + score.getUsername() + "!";
         Label congratsLabel = new Label(congratsString);
-        congratsLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        contentPanel.addComponent(congratsLabel);
+        addLinearCenteredComponent(congratsLabel);
 
         String pointsString = "You scored " + score.getPoints() + " points in the " + score.getQuizType() + " quiz!";
         Label pointsLabel = new Label(pointsString);
-        pointsLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        contentPanel.addComponent(pointsLabel);
+        addLinearCenteredComponent(pointsLabel);
 
         contentPanel.addComponent(new EmptySpace());
 
         Button newGameButton = new Button("New Game");
-        newGameButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        addLinearCenteredComponent(newGameButton);
         newGameButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
@@ -281,27 +269,24 @@ public class TextView extends View {
                 displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
             }
         });
-        contentPanel.addComponent(newGameButton);
 
         Button leadersButton = new Button("Check Leaderboard");
-        leadersButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        addLinearCenteredComponent(leadersButton);
         leadersButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
                 displayLeadersView();
             }
         });
-        contentPanel.addComponent(leadersButton);
 
         Button exitButton = new Button("Exit");
-        exitButton.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        addLinearCenteredComponent(exitButton);
         exitButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
                 endGame();
             }
         });
-        contentPanel.addComponent(exitButton);
 
         mainWindow.setComponent(contentPanel);
     }
@@ -386,5 +371,10 @@ public class TextView extends View {
                 1
         ));
         contentPanel.addComponent(menuBar);
+    }
+
+    private void addLinearCenteredComponent(Component component) {
+        contentPanel.addComponent(component);
+        component.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
     }
 }
