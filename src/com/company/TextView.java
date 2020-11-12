@@ -73,7 +73,7 @@ public class TextView extends View {
         Label welcomeLabel = new Label("Welcome to the Quiz App!");
         addLinearCenteredComponent(welcomeLabel);
 
-        contentPanel.addComponent(new EmptySpace());
+        addEmptySpace(1);
 
         Button button = new Button("New Game");
         addLinearCenteredComponent(button);
@@ -119,7 +119,7 @@ public class TextView extends View {
         Label leaderLabel = new Label("Leaderboard");
         addLinearCenteredComponent(leaderLabel);
 
-        contentPanel.addComponent(new EmptySpace());
+        addEmptySpace(1);
 
         Leaderboard leaderboard = new Leaderboard();
         List<Score> ranking = leaderboard.getRanking();
@@ -132,7 +132,7 @@ public class TextView extends View {
             addLinearCenteredComponent(scoreLabel);
         }
 
-        contentPanel.addComponent(new EmptySpace());
+        addEmptySpace(1);
 
         Button newGameButton = new Button("New Game");
         addLinearCenteredComponent(newGameButton);
@@ -188,10 +188,7 @@ public class TextView extends View {
         ));
         contentPanel.addComponent(questionTextLabel);
 
-        contentPanel.addComponent(new EmptySpace());
-        contentPanel.addComponent(new EmptySpace());
-        contentPanel.addComponent(new EmptySpace());
-        contentPanel.addComponent(new EmptySpace());
+        addEmptySpace(4);
 
         // @TODO: Add timer
 
@@ -258,7 +255,7 @@ public class TextView extends View {
         Label pointsLabel = new Label(pointsString);
         addLinearCenteredComponent(pointsLabel);
 
-        contentPanel.addComponent(new EmptySpace());
+        addEmptySpace(1);
 
         Button newGameButton = new Button("New Game");
         addLinearCenteredComponent(newGameButton);
@@ -376,5 +373,11 @@ public class TextView extends View {
     private void addLinearCenteredComponent(Component component) {
         contentPanel.addComponent(component);
         component.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+    }
+
+    private void addEmptySpace(int count) {
+        for(int i = 0; i < count; i++) {
+            contentPanel.addComponent(new EmptySpace());
+        }
     }
 }
