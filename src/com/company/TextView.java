@@ -34,6 +34,7 @@ public class TextView extends View {
     private MultiWindowTextGUI gui;
     private Window mainWindow;
     private Panel contentPanel;
+    private Quiz quiz;
 
     public TextView() {
         defaultTerminalFactory = new DefaultTerminalFactory();
@@ -80,9 +81,7 @@ public class TextView extends View {
         button.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
-                // @TODO: first user should be able to choose quiz type which he wants
-                // for nav testing now
-                displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
+                displayQuizTypeView();
             }
         });
 
@@ -109,7 +108,33 @@ public class TextView extends View {
 
     @Override
     public void displayQuizTypeView() {
+        contentPanel = new Panel();
+        contentPanel.setLayoutManager(new GridLayout(2));
 
+        GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
+        gridLayout.setVerticalSpacing(1);
+        gridLayout.setLeftMarginSize(20);
+        gridLayout.setRightMarginSize(20);
+
+        Label chooseLabel = new Label("Choose a quiz type:");
+        addGridComponent(contentPanel,chooseLabel,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1);
+
+        addEmptySpace(contentPanel, 4);
+
+        List<String> quizTypes = Quiz.getTypes();
+        for(String type: quizTypes) {
+            Button button = new Button(type);
+            addGridComponent(contentPanel,button,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,false,false,1,1);
+            button.addListener(new Button.Listener() {
+                @Override
+                public void onTriggered(Button button) {
+                    quiz = new Quiz(button.getLabel());
+                    displayQuestionView(quiz.getQuestion());
+                }
+            });
+        }
+
+        mainWindow.setComponent(contentPanel);
     }
 
     @Override
@@ -144,8 +169,7 @@ public class TextView extends View {
         newGameButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
-                // for nav testing now
-                displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
+                displayQuizTypeView();
             }
         });
 
@@ -233,8 +257,7 @@ public class TextView extends View {
         newGameButton.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
-                // for nav testing now
-                displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
+                displayQuizTypeView();
             }
         });
 
@@ -279,8 +302,7 @@ public class TextView extends View {
             public void run() {
                 // @TODO: add message dialog where you choose yes no
 //                MessageDialog.showMessageDialog(gui, "Option", "Do you want to start a new game?", MessageDialogButton.OK);
-                // for nav testing now
-                displayQuestionView(new Question("TEST", new String[]{"tesa", "tesaaaa", "aaaaaaaaaaaaaaaaaaaaaaa", "cos"}, 0));
+                displayQuizTypeView();
             }
         }));
         menuOptions.add(new MenuItem("End quiz", new Runnable() {

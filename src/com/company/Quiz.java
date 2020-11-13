@@ -11,11 +11,15 @@ import java.util.stream.Stream;
 public class Quiz {
     private final String type;
     private List<Question> questions = new ArrayList<>();
-    private int currentQuestion;
+    private int currentQuestionNumber;
 
     public Quiz(String type) {
-        this.currentQuestion = 0;
+        this.currentQuestionNumber = 0;
         this.type = type;
+
+        if(!loadQuestions()) {
+            throw new Error("Couldn't load questions from file");
+        }
     }
 
     public static List<String> getTypes() {
@@ -28,7 +32,6 @@ public class Quiz {
                     fileString = fileString.substring(10).replaceAll(".txt", "");
 
                     files.add(fileString);
-                    System.out.println(fileString);
                 }
             });
         } catch (IOException e) {
@@ -85,13 +88,13 @@ public class Quiz {
     }
 
     public boolean checkAnswer(int answer) {
-        return answer == questions.get(currentQuestion).getCorrectAnswer();
+        return answer == questions.get(currentQuestionNumber).getCorrectAnswer();
     }
 
     public void nextQuestion() {
-        currentQuestion++;
-        if(currentQuestion == questions.size()) {
-            currentQuestion = -1;
+        currentQuestionNumber++;
+        if(currentQuestionNumber == questions.size()) {
+            currentQuestionNumber = -1;
         }
     }
 
@@ -108,8 +111,12 @@ public class Quiz {
         return questions;
     }
 
-    public int getCurrentQuestion() {
-        return currentQuestion;
+    public int getCurrentQuestionNumber() {
+        return currentQuestionNumber;
+    }
+
+    public Question getQuestion() {
+        return questions.get(currentQuestionNumber);
     }
 
     @Override
