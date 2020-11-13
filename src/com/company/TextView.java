@@ -207,7 +207,7 @@ public class TextView extends View {
         gridLayout.setRightMarginSize(10);
 
         addMenu(gui, contentPanel);
-        
+
         displayMultilineQuestion(contentPanel, question.getQuestionText());
 
         addEmptySpace(contentPanel, 4);
@@ -239,13 +239,13 @@ public class TextView extends View {
         });
 
         Button button2 = new Button(answer2);
-        addGridComponent(contentPanel,button2,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,true,false,1,1);
+        addGridComponent(contentPanel,button2,GridLayout.Alignment.END,GridLayout.Alignment.BEGINNING,true,false,1,1);
 
         Button button3 = new Button(answer3);
         addGridComponent(contentPanel,button3,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,false,false,1,1);
 
         Button button4 = new Button(answer4);
-        addGridComponent(contentPanel,button4,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,true,false,1,1);
+        addGridComponent(contentPanel,button4,GridLayout.Alignment.END,GridLayout.Alignment.BEGINNING,true,false,1,1);
 
         mainWindow.setComponent(contentPanel);
     }
