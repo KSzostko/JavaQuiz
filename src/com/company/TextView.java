@@ -20,8 +20,10 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -205,10 +207,8 @@ public class TextView extends View {
         gridLayout.setRightMarginSize(10);
 
         addMenu(gui, contentPanel);
-
-        Label questionTextLabel = new Label(question.getQuestionText());
-        // @TODO: Long question must be displayed in two lines
-        addGridComponent(contentPanel,questionTextLabel,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1);
+        
+        displayMultilineQuestion(contentPanel, question.getQuestionText());
 
         addEmptySpace(contentPanel, 4);
 
@@ -385,6 +385,30 @@ public class TextView extends View {
     private void addEmptySpace(Panel panel, int count) {
         for(int i = 0; i < count; i++) {
             panel.addComponent(new EmptySpace());
+        }
+    }
+
+    private void displayMultilineQuestion(Panel panel, String text) {
+        String[] words = text.split(" ");
+        final int BREAK_LINE = 50;
+        StringBuilder builder = new StringBuilder();
+
+        for(String word: words) {
+            if(builder.length() + word.length() + 1 <= BREAK_LINE) {
+                if(builder.length() != 0) {
+                    builder.append(" ");
+                }
+                builder.append(word);
+            } else {
+                Label textLabel = new Label(builder.toString());
+                addGridComponent(panel,textLabel,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,false,false,2,1);
+                builder.setLength(0);
+                builder.append(word);
+            }
+        }
+        if(builder.length() != 0) {
+            Label textLabel = new Label(builder.toString());
+            addGridComponent(panel,textLabel,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,false,false,2,1);
         }
     }
 }
