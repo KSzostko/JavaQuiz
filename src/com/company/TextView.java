@@ -207,6 +207,7 @@ public class TextView extends View {
         addMenu(gui, contentPanel);
 
         Label questionTextLabel = new Label(question.getQuestionText());
+        // @TODO: Long question must be displayed in two lines
         addGridComponent(contentPanel,questionTextLabel,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1);
 
         addEmptySpace(contentPanel, 4);
@@ -221,6 +222,21 @@ public class TextView extends View {
 
         Button button1 = new Button(answer1);
         addGridComponent(contentPanel,button1,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,false,false,1,1);
+        button1.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                quiz.nextQuestion();
+                int questionNumber = quiz.getCurrentQuestionNumber();
+
+                if(questionNumber != -1) {
+                    Question nextQuestion = quiz.getQuestion();
+                    displayQuestionView(nextQuestion);
+                } else {
+                    // random score just for testing now
+                    displayEndView(new Score("asd", quiz.getType(), 25000));
+                }
+            }
+        });
 
         Button button2 = new Button(answer2);
         addGridComponent(contentPanel,button2,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,true,false,1,1);
