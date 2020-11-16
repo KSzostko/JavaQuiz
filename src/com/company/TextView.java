@@ -11,6 +11,7 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 // @TODO: objects for creating terminal should be fields
 
@@ -37,6 +39,7 @@ public class TextView extends View {
     private Window mainWindow;
     private Panel contentPanel;
     private Quiz quiz;
+    private String username;
 
     public TextView() {
         defaultTerminalFactory = new DefaultTerminalFactory();
@@ -57,11 +60,27 @@ public class TextView extends View {
             contentPanel = new Panel();
             mainWindow.setComponent(contentPanel);
 
-            displayStartView();
+            enterName();
 
             gui.addWindowAndWait(mainWindow);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void enterName() {
+        String result = new TextInputDialogBuilder()
+                .setTitle("Title")
+                .setDescription("Enter your name")
+                .setValidationPattern(Pattern.compile("[a-zA-Z]+[0-9]*"), "Username must contain at least one letter and optionally numbers")
+                .build()
+                .showDialog(gui);
+
+        if(result == null) {
+            endGame();
+        } else {
+            username = result;
+            displayStartView();
         }
     }
 
