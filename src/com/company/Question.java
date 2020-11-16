@@ -23,6 +23,10 @@ public class Question {
         return correctAnswer;
     }
 
+    public boolean checkAnswer(int id) {
+        return id == correctAnswer;
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

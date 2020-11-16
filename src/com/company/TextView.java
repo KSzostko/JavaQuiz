@@ -225,27 +225,36 @@ public class TextView extends View {
         button1.addListener(new Button.Listener() {
             @Override
             public void onTriggered(Button button) {
-                quiz.nextQuestion();
-                int questionNumber = quiz.getCurrentQuestionNumber();
-
-                if(questionNumber != -1) {
-                    Question nextQuestion = quiz.getQuestion();
-                    displayQuestionView(nextQuestion);
-                } else {
-                    // random score just for testing now
-                    displayEndView(new Score("asd", quiz.getType(), 25000));
-                }
+                checkSelectedAnswer(0, question);
             }
         });
 
         Button button2 = new Button(answer2);
         addGridComponent(contentPanel,button2,GridLayout.Alignment.END,GridLayout.Alignment.BEGINNING,true,false,1,1);
+        button2.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                checkSelectedAnswer(1, question);
+            }
+        });
 
         Button button3 = new Button(answer3);
         addGridComponent(contentPanel,button3,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,false,false,1,1);
+        button3.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                checkSelectedAnswer(2, question);
+            }
+        });
 
         Button button4 = new Button(answer4);
         addGridComponent(contentPanel,button4,GridLayout.Alignment.END,GridLayout.Alignment.BEGINNING,true,false,1,1);
+        button4.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                checkSelectedAnswer(3, question);
+            }
+        });
 
         mainWindow.setComponent(contentPanel);
     }
@@ -409,6 +418,33 @@ public class TextView extends View {
         if(builder.length() != 0) {
             Label textLabel = new Label(builder.toString());
             addGridComponent(panel,textLabel,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,false,false,2,1);
+        }
+    }
+
+    private void checkSelectedAnswer(int answerId, Question question) {
+        if(question.checkAnswer(answerId)) {
+            // @TODO: Update score
+            // @TODO: Maybe ask user if he is sure it's the right answer
+            MessageDialog.showMessageDialog(gui, "Bravo!", "This is correct answer",
+                    MessageDialogButton.Close);
+
+            quiz.nextQuestion();
+            int questionNumber = quiz.getCurrentQuestionNumber();
+
+            if(questionNumber != -1) {
+                Question nextQuestion = quiz.getQuestion();
+                displayQuestionView(nextQuestion);
+            } else {
+                MessageDialog.showMessageDialog(gui, "Finish", "You made it to the end!",
+                        MessageDialogButton.Close);
+                // random score just for testing now
+                displayEndView(new Score("asd", quiz.getType(), 25000));
+            }
+        } else {
+            MessageDialog.showMessageDialog(gui, "Ooops", "Not this time bro",
+                    MessageDialogButton.Close);
+            // random score just for testing now
+            displayEndView(new Score("asd", quiz.getType(), 25000));
         }
     }
 }
