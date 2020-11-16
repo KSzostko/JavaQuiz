@@ -220,41 +220,10 @@ public class TextView extends View {
         String answer3 = "C." + answers[2];
         String answer4 = "D." + answers[3];
 
-        Button button1 = new Button(answer1);
-        addGridComponent(contentPanel,button1,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,false,false,1,1);
-        button1.addListener(new Button.Listener() {
-            @Override
-            public void onTriggered(Button button) {
-                checkSelectedAnswer(0, question);
-            }
-        });
-
-        Button button2 = new Button(answer2);
-        addGridComponent(contentPanel,button2,GridLayout.Alignment.END,GridLayout.Alignment.BEGINNING,true,false,1,1);
-        button2.addListener(new Button.Listener() {
-            @Override
-            public void onTriggered(Button button) {
-                checkSelectedAnswer(1, question);
-            }
-        });
-
-        Button button3 = new Button(answer3);
-        addGridComponent(contentPanel,button3,GridLayout.Alignment.BEGINNING,GridLayout.Alignment.BEGINNING,false,false,1,1);
-        button3.addListener(new Button.Listener() {
-            @Override
-            public void onTriggered(Button button) {
-                checkSelectedAnswer(2, question);
-            }
-        });
-
-        Button button4 = new Button(answer4);
-        addGridComponent(contentPanel,button4,GridLayout.Alignment.END,GridLayout.Alignment.BEGINNING,true,false,1,1);
-        button4.addListener(new Button.Listener() {
-            @Override
-            public void onTriggered(Button button) {
-                checkSelectedAnswer(3, question);
-            }
-        });
+        addAnswerButton(answer1, 0, contentPanel, question);
+        addAnswerButton(answer2, 1, contentPanel, question);
+        addAnswerButton(answer3, 2, contentPanel, question);
+        addAnswerButton(answer4, 3, contentPanel, question);
 
         mainWindow.setComponent(contentPanel);
     }
@@ -446,5 +415,25 @@ public class TextView extends View {
             // random score just for testing now
             displayEndView(new Score("asd", quiz.getType(), 25000));
         }
+    }
+
+    private void addAnswerButton(String answerText, int answerId, Panel panel, Question question) {
+        Button button = new Button(answerText);
+
+        boolean onRight = answerId % 2 == 1;
+        GridLayout.Alignment alignment;
+        if(onRight) {
+            alignment = GridLayout.Alignment.END;
+        } else {
+            alignment = GridLayout.Alignment.BEGINNING;
+        }
+        addGridComponent(panel,button,alignment,GridLayout.Alignment.BEGINNING,false,false,1,1);
+
+        button.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                checkSelectedAnswer(answerId, question);
+            }
+        });
     }
 }
