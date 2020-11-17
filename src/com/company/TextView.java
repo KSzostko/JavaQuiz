@@ -88,8 +88,6 @@ public class TextView extends View {
 
     @Override
     public void displayStartView() {
-        currentPoints = 0;
-
         contentPanel = new Panel();
         contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
@@ -133,6 +131,8 @@ public class TextView extends View {
 
     @Override
     public void displayQuizTypeView() {
+        currentPoints = 0;
+
         contentPanel = new Panel();
         contentPanel.setLayoutManager(new GridLayout(2));
 
