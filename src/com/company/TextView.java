@@ -394,7 +394,9 @@ public class TextView extends View {
             // There was a weird bug where
             // sometimes EmptySpace component was deleted
             if(comp.toString().contains("Button")) {
-                if(comp.toString().contains(firstRemoved) || comp.toString().contains(secondRemoved)) {
+                Button compButton = (Button) comp;
+                String buttonString = compButton.getLabel().substring(2);
+                if(buttonString.equals(firstRemoved) || buttonString.equals(secondRemoved)) {
                     toRemove.add(comp);
                 }
             }
@@ -402,6 +404,22 @@ public class TextView extends View {
 
         for(Component comp : toRemove) {
             panel.removeComponent(comp);
+        }
+
+        // fixing layout after removing elements
+        boolean isFirst = true;
+        GridLayout.Alignment alignment;
+        for(Component comp: panel.getChildrenList()) {
+            if(comp.toString().contains("Button")) {
+                if(isFirst) {
+                    alignment = GridLayout.Alignment.BEGINNING;
+                } else {
+                    isFirst = false;
+                    alignment = GridLayout.Alignment.END;
+                }
+                comp.setLayoutData(GridLayout.createLayoutData(alignment, GridLayout.Alignment.BEGINNING,
+                        false, false, 1, 1));
+            }
         }
     }
 
