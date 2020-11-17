@@ -419,11 +419,13 @@ public class TextView extends View {
             MessageDialog.showMessageDialog(gui, "Bravo!", "This is correct answer",
                     MessageDialogButton.Close);
 
-            quiz.nextQuestion();
             int questionNumber = quiz.getCurrentQuestionNumber();
+            currentPoints += 5 * (questionNumber + 1);
+
+            quiz.nextQuestion();
+            questionNumber = quiz.getCurrentQuestionNumber();
 
             // this will change accordingly to time left for answer
-            currentPoints += 5 * questionNumber;
 
             if(questionNumber != -1) {
                 Question nextQuestion = quiz.getQuestion();
