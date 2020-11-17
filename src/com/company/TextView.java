@@ -40,9 +40,11 @@ public class TextView extends View {
     private Panel contentPanel;
     private Quiz quiz;
     private String username;
+    private int currentPoints;
 
     public TextView() {
         defaultTerminalFactory = new DefaultTerminalFactory();
+        currentPoints = 0;
         initializeTerminal();
     }
 
@@ -86,6 +88,8 @@ public class TextView extends View {
 
     @Override
     public void displayStartView() {
+        currentPoints = 0;
+
         contentPanel = new Panel();
         contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
@@ -322,8 +326,7 @@ public class TextView extends View {
             @Override
             public void run() {
 //                MessageDialog.showMessageDialog(gui, "Option", "Do you want to end your quiz?", MessageDialogButton.OK);
-                // for nav testing for now
-                displayEndView(new Score("asd", "nowy", 25000));
+                displayEndView(new Score(username, quiz.getType(), currentPoints));
             }
         }));
         menuOptions.add(new MenuItem("Exit", new Runnable() {
@@ -419,20 +422,21 @@ public class TextView extends View {
             quiz.nextQuestion();
             int questionNumber = quiz.getCurrentQuestionNumber();
 
+            // this will change accordingly to time left for answer
+            currentPoints += 5 * questionNumber;
+
             if(questionNumber != -1) {
                 Question nextQuestion = quiz.getQuestion();
                 displayQuestionView(nextQuestion);
             } else {
                 MessageDialog.showMessageDialog(gui, "Finish", "You made it to the end!",
                         MessageDialogButton.Close);
-                // random score just for testing now
-                displayEndView(new Score("asd", quiz.getType(), 25000));
+                displayEndView(new Score(username, quiz.getType(), currentPoints));
             }
         } else {
             MessageDialog.showMessageDialog(gui, "Ooops", "Not this time bro",
                     MessageDialogButton.Close);
-            // random score just for testing now
-            displayEndView(new Score("asd", quiz.getType(), 25000));
+            displayEndView(new Score(username, quiz.getType(), currentPoints));
         }
     }
 
