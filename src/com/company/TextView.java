@@ -21,12 +21,13 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 // @TODO: objects for creating terminal should be fields
@@ -229,19 +230,19 @@ public class TextView extends View {
         gridLayout.setLeftMarginSize(10);
         gridLayout.setRightMarginSize(10);
 
-        addMenu(gui, contentPanel);
+        String[] answers = question.getAnswers();
+        String answer1 = "A." + answers[0];
+        String answer2 = "B." + answers[1];
+        String answer3 = "C." + answers[2];
+        String answer4 = "D." + answers[3];
+
+        addMenu(gui, contentPanel, answers, question.getCorrectAnswer());
 
         displayMultilineQuestion(contentPanel, question.getQuestionText());
 
         addEmptySpace(contentPanel, 4);
 
         // @TODO: Add timer
-
-        String[] answers = question.getAnswers();
-        String answer1 = "A." + answers[0];
-        String answer2 = "B." + answers[1];
-        String answer3 = "C." + answers[2];
-        String answer4 = "D." + answers[3];
 
         addAnswerButton(answer1, 0, contentPanel, question);
         addAnswerButton(answer2, 1, contentPanel, question);
@@ -309,7 +310,7 @@ public class TextView extends View {
         }
     }
 
-    private void addMenu(MultiWindowTextGUI gui, Panel contentPanel) {
+    private void addMenu(MultiWindowTextGUI gui, Panel contentPanel, String[]answers, int correctAnswer) {
         MenuBar menuBar = new MenuBar();
 
         Menu menuOptions = new Menu("Options");
@@ -351,6 +352,7 @@ public class TextView extends View {
             public void run() {
                 MessageDialog.showMessageDialog(gui, "Hint", "Do you wish to use hint 50:50?",
                         MessageDialogButton.OK);
+                useFiftyFiftyHint(contentPanel, answers, correctAnswer);
             }
         }));
         menuHelp.add(new MenuItem("Phone Expert", new Runnable() {
@@ -369,6 +371,38 @@ public class TextView extends View {
         }));
 
         addGridComponent(contentPanel,menuBar,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1);
+    }
+
+    private void useFiftyFiftyHint(Panel panel, String[] answers, int correctAnswer) {
+        List<String> badAnswers = new ArrayList<>();
+        for(int i = 0; i < answers.length; i++) {
+            if(i != correctAnswer) badAnswers.add(answers[i]);
+        }
+
+        Random random = new Random();
+
+        int removedIndex = random.nextInt(badAnswers.size());
+        String firstRemoved = badAnswers.get(removedIndex);
+        badAnswers.remove(removedIndex);
+
+        removedIndex = random.nextInt(badAnswers.size());
+        String secondRemoved = badAnswers.get(removedIndex);
+
+        List<Component> toRemove = new ArrayList<>();
+        List<Component> compList = panel.getChildrenList();
+        for(Component comp : compList) {
+            // There was a weird bug where
+            // sometimes EmptySpace component was deleted
+            if(comp.toString().contains("Button")) {
+                if(comp.toString().contains(firstRemoved) || comp.toString().contains(secondRemoved)) {
+                    toRemove.add(comp);
+                }
+            }
+        }
+
+        for(Component comp : toRemove) {
+            panel.removeComponent(comp);
+        }
     }
 
     private void addLinearCenteredComponent(Panel panel, Component component) {
