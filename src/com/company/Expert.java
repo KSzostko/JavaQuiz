@@ -7,7 +7,7 @@ import java.util.Random;
 public class Expert {
     private final List<String> expertAnswers = new ArrayList<>();
 
-    public void Expert() {
+    public Expert() {
         populateAnswers();
     }
 

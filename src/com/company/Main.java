@@ -14,6 +14,5 @@ public class Main {
 //        textView.displayStartView();
 //        textView.displayEndView(new Score("asd", "nowy", 25000));
 //        Quiz.getTypes();
-
     }
 }

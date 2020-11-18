@@ -358,8 +358,9 @@ public class TextView extends View {
         menuHelp.add(new MenuItem("Phone Expert", new Runnable() {
             @Override
             public void run() {
-                MessageDialog.showMessageDialog(gui, "Hint", "Do you wish to phone your quiz expert?",
+                MessageDialog.showMessageDialog(gui, "Hint", "Do you wish to phone our quiz expert?",
                         MessageDialogButton.OK);
+                usePhoneExpertHint(answers, correctAnswer);
             }
         }));
         menuHelp.add(new MenuItem("Audience Choice", new Runnable() {
@@ -421,6 +422,55 @@ public class TextView extends View {
                         false, false, 1, 1));
             }
         }
+    }
+
+    private void usePhoneExpertHint(String[] answers, int correctAnswer) {
+        Random random = new Random();
+
+        Expert expert = new Expert();
+        String expertAnswer = expert.chooseExpertAnswer();
+
+        int currentOdd;
+        int highestOdd = -1;
+        int finalChoice = -1;
+        for(int i = 0; i < answers.length; i++) {
+            if(i == correctAnswer) {
+                currentOdd = 30 + random.nextInt(70);
+            } else {
+                currentOdd = 15 + random.nextInt(85);
+            }
+
+            if(currentOdd > highestOdd) {
+                highestOdd = currentOdd;
+                finalChoice = i;
+            }
+        }
+
+        String finalString = expertAnswer + answers[finalChoice];
+
+        // multiline dialog text
+        final int BREAK_LINE = 50;
+        int currentLineLength = 0;
+
+        String[] words = finalString.split(" ");
+        StringBuilder builder = new StringBuilder();
+
+        for(String word: words) {
+            if(currentLineLength + word.length() + 1 <= BREAK_LINE) {
+                if(builder.length() != 0) {
+                    builder.append(" ");
+                    currentLineLength++;
+                }
+                builder.append(word);
+                currentLineLength += word.length();
+            } else {
+                builder.append("\n");
+                builder.append(word);
+                currentLineLength = word.length();
+            }
+        }
+
+        MessageDialog.showMessageDialog(gui, "Expert answer", builder.toString(), MessageDialogButton.OK);
     }
 
     private void addLinearCenteredComponent(Panel panel, Component component) {
