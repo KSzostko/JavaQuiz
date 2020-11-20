@@ -24,13 +24,8 @@ import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Pattern;
-
-// @TODO: objects for creating terminal should be fields
 
 public class TextView extends View {
     private final DefaultTerminalFactory defaultTerminalFactory;
@@ -42,10 +37,20 @@ public class TextView extends View {
     private Quiz quiz;
     private String username;
     private int currentPoints;
+    private boolean wasHintUsed;
+
+    private enum Hints {
+        FIFTYFYFTY,
+        EXPERT,
+        AUDIENCE
+    };
+    private Set<Hints> usedHints;
 
     public TextView() {
         defaultTerminalFactory = new DefaultTerminalFactory();
         currentPoints = 0;
+        wasHintUsed = false;
+        usedHints = new HashSet<>();
         initializeTerminal();
     }
 
@@ -132,6 +137,7 @@ public class TextView extends View {
 
     @Override
     public void displayQuizTypeView() {
+        usedHints.clear();
         currentPoints = 0;
 
         contentPanel = new Panel();
@@ -222,6 +228,8 @@ public class TextView extends View {
 
     @Override
     public void displayQuestionView(Question question) {
+        wasHintUsed = false;
+
         Panel contentPanel = new Panel();
         contentPanel.setLayoutManager(new GridLayout(2));
 
@@ -338,38 +346,56 @@ public class TextView extends View {
             }
         }));
 
-        // @TODO: Use only one hint per question
         Menu menuHelp = new Menu("Hints");
         menuBar.add(menuHelp);
         menuHelp.add(new MenuItem("About", new Runnable() {
             @Override
             public void run() {
-                MessageDialog.showMessageDialog(gui, "Hint", "You can use every hint only once in the game",
+                MessageDialog.showMessageDialog(gui, "Hint", "You can use every hint only once in the game\n" +
+                        "You can only use one hint per question",
                         MessageDialogButton.OK);
             }
         }));
         menuHelp.add(new MenuItem("50:50", new Runnable() {
             @Override
             public void run() {
-                MessageDialog.showMessageDialog(gui, "Hint", "Do you wish to use hint 50:50?",
-                        MessageDialogButton.OK);
-                useFiftyFiftyHint(contentPanel, answers, correctAnswer);
+                if(!wasHintUsed && !usedHints.contains(Hints.FIFTYFYFTY)) {
+                    wasHintUsed = true;
+                    usedHints.add(Hints.FIFTYFYFTY);
+                    useFiftyFiftyHint(contentPanel, answers, correctAnswer);
+                } else {
+                    MessageDialog.showMessageDialog(gui, "Hint", "You can't use this hint right now.\n" +
+                                    "You either used it before or used other hint for this question",
+                            MessageDialogButton.OK);
+                }
             }
         }));
         menuHelp.add(new MenuItem("Phone Expert", new Runnable() {
             @Override
             public void run() {
-                MessageDialog.showMessageDialog(gui, "Hint", "Do you wish to phone our quiz expert?",
-                        MessageDialogButton.OK);
-                usePhoneExpertHint(answers, correctAnswer);
+                if(!wasHintUsed && !usedHints.contains(Hints.EXPERT)) {
+                    wasHintUsed = true;
+                    usedHints.add(Hints.EXPERT);
+                    usePhoneExpertHint(answers, correctAnswer);
+                } else {
+                    MessageDialog.showMessageDialog(gui, "Hint", "You can't use this hint right now.\n" +
+                                    "You either used it before or used other hint for this question",
+                            MessageDialogButton.OK);
+                }
             }
         }));
         menuHelp.add(new MenuItem("Audience Choice", new Runnable() {
             @Override
             public void run() {
-                MessageDialog.showMessageDialog(gui, "Hint", "Do you wish to ask the audience for the answer?",
-                        MessageDialogButton.OK);
-                useAskAudienceHint(answers, correctAnswer);
+                if(!wasHintUsed && !usedHints.contains(Hints.AUDIENCE)) {
+                    wasHintUsed = true;
+                    usedHints.add(Hints.AUDIENCE);
+                    useAskAudienceHint(answers, correctAnswer);
+                } else {
+                    MessageDialog.showMessageDialog(gui, "Hint", "You can't use this hint right now.\n" +
+                                    "You either used it before or used other hint for this question",
+                            MessageDialogButton.OK);
+                }
             }
         }));
 
