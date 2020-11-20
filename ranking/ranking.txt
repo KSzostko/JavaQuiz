@@ -7,6 +7,6 @@ nowy
 Ktos
 Test
 20000
-
-
--1
+kuba
+mobile devices
+50

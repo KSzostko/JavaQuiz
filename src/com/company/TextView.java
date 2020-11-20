@@ -38,6 +38,7 @@ public class TextView extends View {
     private String username;
     private int currentPoints;
     private boolean wasHintUsed;
+    private Leaderboard leaderboard;
 
     private enum Hints {
         FIFTYFYFTY,
@@ -50,6 +51,7 @@ public class TextView extends View {
         defaultTerminalFactory = new DefaultTerminalFactory();
         currentPoints = 0;
         wasHintUsed = false;
+        leaderboard = new Leaderboard();
         usedHints = new HashSet<>();
         initializeTerminal();
     }
@@ -183,7 +185,6 @@ public class TextView extends View {
 
         addEmptySpace(contentPanel, 1);
 
-        Leaderboard leaderboard = new Leaderboard();
         List<Score> ranking = leaderboard.getRanking();
 
         for (int i = 0; i < ranking.size(); i++) {
@@ -262,6 +263,8 @@ public class TextView extends View {
 
     @Override
     public void displayEndView(Score score) {
+        leaderboard.addScore(score);
+
         Panel contentPanel = new Panel();
         contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
