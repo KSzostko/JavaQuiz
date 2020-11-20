@@ -4,9 +4,12 @@ nowy
 asd
 nowy
 25000
-Ktos
-Test
-20000
-kuba
+s
+test
+5
+k
 mobile devices
-50
+5
+k
+test
+0
