@@ -23,14 +23,12 @@ public class Leaderboard {
             int points = -1, lineCount = 0;
 
             while((fileLine = br.readLine()) != null) {
-                System.out.println("Linia to: " + fileLine);
                 if(lineCount % 3 == 0) {
                     if(lineCount != 0) {
                         if(points == -1) {
                             throw new Error("Something is wrong with the data order");
                         }
 
-                        System.out.println("Dodajemy do rankingu: " + username + " " + quizType + " " + points);
                         Score score = new Score(username, quizType, points);
                         ranking.add(score);
                     }
