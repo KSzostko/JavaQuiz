@@ -212,7 +212,7 @@ public class TextView extends View {
                         MessageDialogButton.OK);
                 File file = new FileDialogBuilder()
                         .setTitle("Open File")
-                        .setDescription("Choose a file")
+                        .setDescription("Choose ranking directory in the right panel and then ranking.txt")
                         .setActionLabel("Open")
                         .build()
                         .showDialog(gui);
