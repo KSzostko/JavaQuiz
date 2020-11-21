@@ -5,16 +5,19 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.Button;
+import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Window;
+import com.googlecode.lanterna.gui2.dialogs.FileDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
+import com.googlecode.lanterna.gui2.table.Table;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -22,9 +25,12 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class TextView extends View {
@@ -183,20 +189,43 @@ public class TextView extends View {
         Label leaderLabel = new Label("Leaderboard");
         addLinearCenteredComponent(contentPanel, leaderLabel);
 
-        addEmptySpace(contentPanel, 1);
-
         // it can be hard to fit more scores on the small terminal screen
         List<Score> ranking = leaderboard.getTop5();
 
+        Table<String> rankingTable = new Table<>("Pos", "Username", "Quiz type", "Points");
+
         for (int i = 0; i < ranking.size(); i++) {
             Score score = ranking.get(i);
-            String scoreString = (i + 1) + ". " + score.getUsername() + " " + score.getQuizType() + " " + score.getPoints();
-
-            Label scoreLabel = new Label(scoreString);
-            addLinearCenteredComponent(contentPanel, scoreLabel);
+            rankingTable.getTableModel().addRow(String.valueOf(i + 1), score.getUsername(), score.getQuizType(), String.valueOf(score.getPoints()));
         }
+        addLinearCenteredComponent(contentPanel, rankingTable);
 
         addEmptySpace(contentPanel, 1);
+
+        Button fullRankingButton = new Button("Open full ranking");
+        addLinearCenteredComponent(contentPanel, fullRankingButton);
+        fullRankingButton.addListener(new Button.Listener() {
+            @Override
+            public void onTriggered(Button button) {
+                MessageDialog.showMessageDialog(gui, "Info", "To see full ranking choose ranking directory in the right panel.\n"
+                        + "Then you have to choose the ranking.txt file and click open",
+                        MessageDialogButton.OK);
+                File file = new FileDialogBuilder()
+                        .setTitle("Open File")
+                        .setDescription("Choose a file")
+                        .setActionLabel("Open")
+                        .build()
+                        .showDialog(gui);
+
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    desktop.open(file);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         Button newGameButton = new Button("New Game");
         addLinearCenteredComponent(contentPanel, newGameButton);
@@ -406,6 +435,7 @@ public class TextView extends View {
         addGridComponent(contentPanel,menuBar,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1);
     }
 
+    // @TODO: Try using setVisible method instead of removing buttons
     private void useFiftyFiftyHint(Panel panel, String[] answers, int correctAnswer) {
         List<String> badAnswers = new ArrayList<>();
         for(int i = 0; i < answers.length; i++) {
