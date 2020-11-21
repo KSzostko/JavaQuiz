@@ -149,6 +149,7 @@ public class TextView extends View {
         currentPoints = 0;
 
         contentPanel = new Panel();
+        // @TODO: Increase number of columns to display more types on screen
         contentPanel.setLayoutManager(new GridLayout(2));
 
         GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
@@ -179,7 +180,6 @@ public class TextView extends View {
 
     @Override
     public void displayLeadersView() {
-        // @TODO: Change layout to Grid layout and create table with column names
         contentPanel = new Panel();
         contentPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
@@ -361,22 +361,18 @@ public class TextView extends View {
         menuOptions.add(new MenuItem("Restart", new Runnable() {
             @Override
             public void run() {
-                // @TODO: add message dialog where you choose yes no
-//                MessageDialog.showMessageDialog(gui, "Option", "Do you want to start a new game?", MessageDialogButton.OK);
                 displayQuizTypeView();
             }
         }));
         menuOptions.add(new MenuItem("End quiz", new Runnable() {
             @Override
             public void run() {
-//                MessageDialog.showMessageDialog(gui, "Option", "Do you want to end your quiz?", MessageDialogButton.OK);
                 displayEndView(new Score(username, quiz.getType(), currentPoints));
             }
         }));
         menuOptions.add(new MenuItem("Exit", new Runnable() {
             @Override
             public void run() {
-//                MessageDialog.showMessageDialog(gui, "Option", "Do you really wanna end now?", MessageDialogButton.OK);
                 endGame();
             }
         }));
@@ -437,7 +433,6 @@ public class TextView extends View {
         addGridComponent(contentPanel,menuBar,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1);
     }
 
-    // @TODO: Try using setVisible method instead of removing buttons
     private void useFiftyFiftyHint(Panel panel, String[] answers, int correctAnswer) {
         List<String> badAnswers = new ArrayList<>();
         for(int i = 0; i < answers.length; i++) {
@@ -468,23 +463,7 @@ public class TextView extends View {
         }
 
         for(Component comp : toRemove) {
-            panel.removeComponent(comp);
-        }
-
-        // fixing layout after removing elements
-        boolean isFirst = true;
-        GridLayout.Alignment alignment;
-        for(Component comp: panel.getChildrenList()) {
-            if(comp.toString().contains("Button")) {
-                if(isFirst) {
-                    alignment = GridLayout.Alignment.BEGINNING;
-                } else {
-                    isFirst = false;
-                    alignment = GridLayout.Alignment.END;
-                }
-                comp.setLayoutData(GridLayout.createLayoutData(alignment, GridLayout.Alignment.BEGINNING,
-                        false, false, 1, 1));
-            }
+            comp.setVisible(false);
         }
     }
 
@@ -608,8 +587,6 @@ public class TextView extends View {
 
     private void checkSelectedAnswer(int answerId, Question question) {
         if(question.checkAnswer(answerId)) {
-            // @TODO: Update score
-            // @TODO: Maybe ask user if he is sure it's the right answer
             MessageDialog.showMessageDialog(gui, "Bravo!", "This is correct answer",
                     MessageDialogButton.Close);
 
