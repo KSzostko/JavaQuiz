@@ -4,6 +4,9 @@ nowy
 asd
 nowy
 25000
+gg
+mobile devices
+50
 s
 test
 5

@@ -91,4 +91,15 @@ public class Leaderboard {
     public List<Score> getRanking() {
         return ranking;
     }
+
+    public List<Score> getTop5() {
+        List<Score> top5 = new ArrayList<>();
+        int size = Integer.min(5, ranking.size());
+
+        for(int i = 0; i < size; i++) {
+            top5.add(ranking.get(i));
+        }
+
+        return top5;
+    }
 }

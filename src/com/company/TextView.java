@@ -185,7 +185,8 @@ public class TextView extends View {
 
         addEmptySpace(contentPanel, 1);
 
-        List<Score> ranking = leaderboard.getRanking();
+        // it can be hard to fit more scores on the small terminal screen
+        List<Score> ranking = leaderboard.getTop5();
 
         for (int i = 0; i < ranking.size(); i++) {
             Score score = ranking.get(i);
