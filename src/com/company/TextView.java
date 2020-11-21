@@ -217,12 +217,14 @@ public class TextView extends View {
                         .build()
                         .showDialog(gui);
 
-                Desktop desktop = Desktop.getDesktop();
-                try {
-                    desktop.open(file);
+                if(file != null) {
+                    Desktop desktop = Desktop.getDesktop();
+                    try {
+                        desktop.open(file);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
