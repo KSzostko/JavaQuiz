@@ -45,6 +45,7 @@ public class TextView extends View {
     private int currentPoints;
     private boolean wasHintUsed;
     private Leaderboard leaderboard;
+    private long currentTime;
 
     private enum Hints {
         FIFTYFYFTY,
@@ -170,6 +171,8 @@ public class TextView extends View {
                 @Override
                 public void onTriggered(Button button) {
                     quiz = new Quiz(button.getLabel());
+                    MessageDialog.showMessageDialog(gui, "Info", "You can get bonus points if you will answer questions fast enough",
+                            MessageDialogButton.OK);
                     displayQuestionView(quiz.getQuestion());
                 }
             });
@@ -261,6 +264,7 @@ public class TextView extends View {
 
     @Override
     public void displayQuestionView(Question question) {
+        currentTime = System.currentTimeMillis();
         wasHintUsed = false;
 
         Panel contentPanel = new Panel();
@@ -593,12 +597,16 @@ public class TextView extends View {
                     MessageDialogButton.Close);
 
             int questionNumber = quiz.getCurrentQuestionNumber();
-            currentPoints += 5 * (questionNumber + 1);
+            int basePoints = 5 * (questionNumber + 1);
+
+            int questionTime = (int) (System.currentTimeMillis() - currentTime) / 1000;
+            int bonus = Math.max(basePoints - questionTime, 0);
+
+            int finalPoints = basePoints + bonus;
+            currentPoints += finalPoints;
 
             quiz.nextQuestion();
             questionNumber = quiz.getCurrentQuestionNumber();
-
-            // this will change accordingly to time left for answer
 
             if(questionNumber != -1) {
                 Question nextQuestion = quiz.getQuestion();
