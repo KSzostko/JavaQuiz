@@ -283,12 +283,14 @@ public class TextView extends View {
 
         addEmptySpace(contentPanel, 4);
 
-        // @TODO: Add timer
-
         addAnswerButton(answer1, 0, contentPanel, question);
         addAnswerButton(answer2, 1, contentPanel, question);
         addAnswerButton(answer3, 2, contentPanel, question);
         addAnswerButton(answer4, 3, contentPanel, question);
+
+        addEmptySpace(contentPanel, 2);
+
+        addAnimatedLabel(contentPanel);
 
         mainWindow.setComponent(contentPanel);
     }
@@ -631,5 +633,16 @@ public class TextView extends View {
                 checkSelectedAnswer(answerId, question);
             }
         });
+    }
+
+    private void addAnimatedLabel(Panel panel) {
+        AnimatedLabel label = new AnimatedLabel("Time is ticking");
+        label.addFrame("Time is ticking.");
+        label.addFrame("Time is ticking..");
+        label.addFrame("Time is ticking...");
+        addGridComponent(panel,label,
+                GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,
+                true,false,2,1);
+        label.startAnimation(500);
     }
 }
