@@ -22,3 +22,45 @@ What is the latest Android version?
 9
 8
 1
+When was the first Iphone released?
+September 23 2008
+July 15 2008
+January 15 2007
+June 29 2007
+3
+Which among the following is not a member of Open Handset Alliance?
+Samsung
+Apple
+Wipro
+None of these
+1
+What is the root element of AndroidManifest.xml?
+application
+manifest
+activity
+action
+1
+What does SAX stands for?
+Simple Application for XML
+Sample API for XML
+Sample API for XHTML
+Simple API for XML
+3
+Which IOS version supports multitasking?
+All IOS versions
+IOS 7 and above
+IOS 4 and above
+None
+2
+Where are Apple Headquaters located?
+New York
+Washington
+Cupertino
+Chicago
+2
+Who is Apple current CEO?
+Steve Wozniak
+Steve Jobs
+Ronald Wayne
+Tim Cook
+3
