@@ -151,7 +151,7 @@ public class TextView extends View {
 
         contentPanel = new Panel();
         // @TODO: Increase number of columns to display more types on screen
-        contentPanel.setLayoutManager(new GridLayout(2));
+        contentPanel.setLayoutManager(new GridLayout(4));
 
         GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
         gridLayout.setVerticalSpacing(1);
@@ -159,9 +159,9 @@ public class TextView extends View {
         gridLayout.setRightMarginSize(20);
 
         Label chooseLabel = new Label("Choose a quiz type:");
-        addGridComponent(contentPanel,chooseLabel,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,2,1);
+        addGridComponent(contentPanel,chooseLabel,GridLayout.Alignment.CENTER,GridLayout.Alignment.BEGINNING,true,false,4,1);
 
-        addEmptySpace(contentPanel, 4);
+        addEmptySpace(contentPanel, 8);
 
         List<String> quizTypes = Quiz.getTypes();
         for(String type: quizTypes) {
