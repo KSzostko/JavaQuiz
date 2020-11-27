@@ -7,6 +7,9 @@ nowy
 kuba
 mobile devices
 603
+kuba
+mobile devices
+503
 a
 mobile devices
 96
@@ -22,6 +25,9 @@ test
 a
 test
 28
+kuba
+test
+26
 a
 test
 9

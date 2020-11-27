@@ -109,7 +109,10 @@ public class TextView extends View {
         LinearLayout linearLayout = (LinearLayout) contentPanel.getLayoutManager();
         linearLayout.setSpacing(1);
 
-        Label welcomeLabel = new Label("Welcome to the Quiz App!");
+        addEmptySpace(contentPanel, 1);
+
+        String asciiWord = AsciiArt.drawWord("Quiz");
+        Label welcomeLabel = new Label(asciiWord);
         addLinearCenteredComponent(contentPanel, welcomeLabel);
 
         addEmptySpace(contentPanel, 1);
