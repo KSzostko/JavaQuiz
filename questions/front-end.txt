@@ -1,0 +1,24 @@
+What is NOT an HTML5 element?
+section
+block
+audio
+canvas
+1
+Which one of these is a CSS framework?
+Angular
+CSS Block
+Backbone
+Bootstrap
+3
+What are Sass, Stylus nad LESS?
+Types of Css
+Responsive grid systems
+CSS frameworks
+CSS preprocessors
+3
+What does the 'C' in CSS stands for?
+Cascading
+Complete
+Concatenate
+Color
+0

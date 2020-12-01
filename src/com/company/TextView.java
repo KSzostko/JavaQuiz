@@ -1,8 +1,6 @@
 package com.company;
 
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
-import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.Button;
 import com.googlecode.lanterna.gui2.Component;
@@ -18,8 +16,6 @@ import com.googlecode.lanterna.gui2.menu.Menu;
 import com.googlecode.lanterna.gui2.menu.MenuBar;
 import com.googlecode.lanterna.gui2.menu.MenuItem;
 import com.googlecode.lanterna.gui2.table.Table;
-import com.googlecode.lanterna.input.KeyStroke;
-import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
@@ -28,7 +24,6 @@ import com.googlecode.lanterna.terminal.Terminal;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -153,8 +148,7 @@ public class TextView extends View {
         currentPoints = 0;
 
         contentPanel = new Panel();
-        // @TODO: Increase number of columns to display more types on screen
-        contentPanel.setLayoutManager(new GridLayout(4));
+        contentPanel.setLayoutManager(new GridLayout(2));
 
         GridLayout gridLayout = (GridLayout) contentPanel.getLayoutManager();
         gridLayout.setVerticalSpacing(1);
