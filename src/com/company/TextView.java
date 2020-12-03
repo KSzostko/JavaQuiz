@@ -37,7 +37,7 @@ public class TextView extends View {
     private Panel contentPanel;
     private Quiz quiz;
     private String username;
-    private int currentPoints;
+    private final PointsCalculator pointsCalculator;
     private boolean wasHintUsed;
     private Leaderboard leaderboard;
     private long currentTime;
@@ -51,7 +51,7 @@ public class TextView extends View {
 
     public TextView() {
         defaultTerminalFactory = new DefaultTerminalFactory();
-        currentPoints = 0;
+        pointsCalculator = new PointsCalculator();
         wasHintUsed = false;
         leaderboard = new Leaderboard();
         usedHints = new HashSet<>();
@@ -145,7 +145,7 @@ public class TextView extends View {
     @Override
     public void displayQuizTypeView() {
         usedHints.clear();
-        currentPoints = 0;
+        pointsCalculator.resetPoints();
 
         contentPanel = new Panel();
         contentPanel.setLayoutManager(new GridLayout(2));
@@ -370,7 +370,7 @@ public class TextView extends View {
         menuOptions.add(new MenuItem("End quiz", new Runnable() {
             @Override
             public void run() {
-                displayEndView(new Score(username, quiz.getType(), currentPoints));
+                displayEndView(new Score(username, quiz.getType(), pointsCalculator.getPoints()));
             }
         }));
         menuOptions.add(new MenuItem("Exit", new Runnable() {
@@ -594,13 +594,9 @@ public class TextView extends View {
                     MessageDialogButton.Close);
 
             int questionNumber = quiz.getCurrentQuestionNumber();
-            int basePoints = 5 * (questionNumber + 1);
-
             int questionTime = (int) (System.currentTimeMillis() - currentTime) / 1000;
-            int bonus = Math.max(basePoints - questionTime, 0);
 
-            int finalPoints = basePoints + bonus;
-            currentPoints += finalPoints;
+            pointsCalculator.calculatePoints(questionNumber, questionTime);
 
             quiz.nextQuestion();
             questionNumber = quiz.getCurrentQuestionNumber();
@@ -611,12 +607,12 @@ public class TextView extends View {
             } else {
                 MessageDialog.showMessageDialog(gui, "Finish", "You made it to the end!",
                         MessageDialogButton.Close);
-                displayEndView(new Score(username, quiz.getType(), currentPoints));
+                displayEndView(new Score(username, quiz.getType(), pointsCalculator.getPoints()));
             }
         } else {
             MessageDialog.showMessageDialog(gui, "Ooops", "Not this time bro",
                     MessageDialogButton.Close);
-            displayEndView(new Score(username, quiz.getType(), currentPoints));
+            displayEndView(new Score(username, quiz.getType(), pointsCalculator.getPoints()));
         }
     }
 

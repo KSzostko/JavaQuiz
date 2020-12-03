@@ -6,11 +6,20 @@ nowy
 25000
 kuba
 mobile devices
+633
+kuba
+mobile devices
 603
 kuba
 mobile devices
 503
+kuba2
+mobile devices
+187
 a
+mobile devices
+96
+kuba
 mobile devices
 96
 a
@@ -39,4 +48,7 @@ mobile devices
 5
 k
 test
+0
+kuba2
+front-end
 0
