@@ -457,28 +457,8 @@ public class TextView extends View {
     }
 
     private void usePhoneExpertHint(String[] answers, int correctAnswer) {
-        Random random = new Random();
-
         Expert expert = new Expert();
-        String expertAnswer = expert.chooseExpertAnswer();
-
-        int currentOdd;
-        int highestOdd = -1;
-        int finalChoice = -1;
-        for(int i = 0; i < answers.length; i++) {
-            if(i == correctAnswer) {
-                currentOdd = 30 + random.nextInt(70);
-            } else {
-                currentOdd = 15 + random.nextInt(85);
-            }
-
-            if(currentOdd > highestOdd) {
-                highestOdd = currentOdd;
-                finalChoice = i;
-            }
-        }
-
-        String finalString = expertAnswer + answers[finalChoice];
+        String finalString = expert.getExpertAnswer(answers, correctAnswer);
 
         // multiline dialog text
         final int BREAK_LINE = 50;

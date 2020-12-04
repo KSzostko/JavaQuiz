@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -24,10 +25,34 @@ public class Expert {
         expertAnswers.add("I am no expert in this area, but I would risk with the answer ");
     }
 
-    public String chooseExpertAnswer() {
+    private String chooseExpertAnswer() {
         Random random = new Random();
         int answerId = random.nextInt(expertAnswers.size());
 
         return expertAnswers.get(answerId);
+    }
+
+    public String getExpertAnswer(String[] answers, int correctAnswer) {
+        Random random = new Random();
+
+        String expertAnswer = chooseExpertAnswer();
+
+        int currentOdd;
+        int highestOdd = -1;
+        int finalChoice = -1;
+        for(int i = 0; i < answers.length; i++) {
+            if(i == correctAnswer) {
+                currentOdd = 30 + random.nextInt(70);
+            } else {
+                currentOdd = 15 + random.nextInt(85);
+            }
+
+            if(currentOdd > highestOdd) {
+                highestOdd = currentOdd;
+                finalChoice = i;
+            }
+        }
+
+        return expertAnswer + answers[finalChoice];
     }
 }
