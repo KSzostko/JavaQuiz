@@ -365,10 +365,10 @@ public class TextView extends View {
                 displayEndView(new Score(username, quiz.getType(), pointsCalculator.getPoints()));
             }
         }));
-        menuOptions.add(new MenuItem("Exit", new Runnable() {
+        menuOptions.add(new MenuItem("Menu", new Runnable() {
             @Override
             public void run() {
-                endGame();
+                displayStartView();
             }
         }));
 
