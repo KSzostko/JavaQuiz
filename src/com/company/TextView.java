@@ -423,19 +423,7 @@ public class TextView extends View {
     }
 
     private void useFiftyFiftyHint(Panel panel, String[] answers, int correctAnswer) {
-        List<String> badAnswers = new ArrayList<>();
-        for(int i = 0; i < answers.length; i++) {
-            if(i != correctAnswer) badAnswers.add(answers[i]);
-        }
-
-        Random random = new Random();
-
-        int removedIndex = random.nextInt(badAnswers.size());
-        String firstRemoved = badAnswers.get(removedIndex);
-        badAnswers.remove(removedIndex);
-
-        removedIndex = random.nextInt(badAnswers.size());
-        String secondRemoved = badAnswers.get(removedIndex);
+        String[] removedAnswers = Fifty.chooseRemoved(answers, correctAnswer);
 
         List<Component> toRemove = new ArrayList<>();
         List<Component> compList = panel.getChildrenList();
@@ -445,7 +433,7 @@ public class TextView extends View {
             if(comp.toString().contains("Button")) {
                 Button compButton = (Button) comp;
                 String buttonString = compButton.getLabel().substring(2);
-                if(buttonString.equals(firstRemoved) || buttonString.equals(secondRemoved)) {
+                if(buttonString.equals(removedAnswers[0]) || buttonString.equals(removedAnswers[1])) {
                     toRemove.add(comp);
                 }
             }
