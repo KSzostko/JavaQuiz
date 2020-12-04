@@ -38,23 +38,15 @@ public class TextView extends View {
     private Quiz quiz;
     private String username;
     private final PointsCalculator pointsCalculator;
-    private boolean wasHintUsed;
+    private final HintsChecker hintsChecker;
     private Leaderboard leaderboard;
     private long currentTime;
-
-    private enum Hints {
-        FIFTYFYFTY,
-        EXPERT,
-        AUDIENCE
-    };
-    private Set<Hints> usedHints;
 
     public TextView() {
         defaultTerminalFactory = new DefaultTerminalFactory();
         pointsCalculator = new PointsCalculator();
-        wasHintUsed = false;
+        hintsChecker = new HintsChecker();
         leaderboard = new Leaderboard();
-        usedHints = new HashSet<>();
         initializeTerminal();
     }
 
@@ -144,7 +136,7 @@ public class TextView extends View {
 
     @Override
     public void displayQuizTypeView() {
-        usedHints.clear();
+        hintsChecker.clearUsedHints();
         pointsCalculator.resetPoints();
 
         contentPanel = new Panel();
@@ -262,7 +254,7 @@ public class TextView extends View {
     @Override
     public void displayQuestionView(Question question) {
         currentTime = System.currentTimeMillis();
-        wasHintUsed = false;
+        hintsChecker.clearWasUsed();
 
         Panel contentPanel = new Panel();
         contentPanel.setLayoutManager(new GridLayout(2));
@@ -393,9 +385,7 @@ public class TextView extends View {
         menuHelp.add(new MenuItem("50:50", new Runnable() {
             @Override
             public void run() {
-                if(!wasHintUsed && !usedHints.contains(Hints.FIFTYFYFTY)) {
-                    wasHintUsed = true;
-                    usedHints.add(Hints.FIFTYFYFTY);
+                if(hintsChecker.canUseHint(Hint.FIFTYFYFTY)) {
                     useFiftyFiftyHint(contentPanel, answers, correctAnswer);
                 } else {
                     MessageDialog.showMessageDialog(gui, "Hint", "You can't use this hint right now.\n" +
@@ -407,9 +397,7 @@ public class TextView extends View {
         menuHelp.add(new MenuItem("Phone Expert", new Runnable() {
             @Override
             public void run() {
-                if(!wasHintUsed && !usedHints.contains(Hints.EXPERT)) {
-                    wasHintUsed = true;
-                    usedHints.add(Hints.EXPERT);
+                if(hintsChecker.canUseHint(Hint.EXPERT)) {
                     usePhoneExpertHint(answers, correctAnswer);
                 } else {
                     MessageDialog.showMessageDialog(gui, "Hint", "You can't use this hint right now.\n" +
@@ -421,9 +409,7 @@ public class TextView extends View {
         menuHelp.add(new MenuItem("Audience Choice", new Runnable() {
             @Override
             public void run() {
-                if(!wasHintUsed && !usedHints.contains(Hints.AUDIENCE)) {
-                    wasHintUsed = true;
-                    usedHints.add(Hints.AUDIENCE);
+                if(hintsChecker.canUseHint(Hint.AUDIENCE)) {
                     useAskAudienceHint(answers, correctAnswer);
                 } else {
                     MessageDialog.showMessageDialog(gui, "Hint", "You can't use this hint right now.\n" +
