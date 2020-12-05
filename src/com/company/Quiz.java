@@ -87,10 +87,6 @@ public class Quiz {
         }
     }
 
-    public boolean checkAnswer(int answer) {
-        return answer == questions.get(currentQuestionNumber).getCorrectAnswer();
-    }
-
     public void nextQuestion() {
         currentQuestionNumber++;
         if(currentQuestionNumber == questions.size()) {
@@ -98,17 +94,8 @@ public class Quiz {
         }
     }
 
-    // mostly for testing for now
-    public void addQuestion(Question question) {
-        questions.add(question);
-    }
-
     public String getType() {
         return type;
-    }
-
-    public List<Question> getQuestions() {
-        return questions;
     }
 
     public int getCurrentQuestionNumber() {
