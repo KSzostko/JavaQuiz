@@ -43,24 +43,15 @@ public class GuiView extends View {
         headerLabel.setBorder(new CompoundBorder(border, margin));
 
         JButton okButton = new JButton("New Game");
-        okButton.setBackground(Color.decode("#6200EE"));
-        okButton.setForeground(Color.decode("#FFFFFF"));
-        okButton.setBorderPainted(false);
-        okButton.setFont(new Font("Lato", Font.PLAIN, 15));
+        styleButton(okButton);
         okButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton submitButton = new JButton("Leaderboard");
-        submitButton.setBackground(Color.decode("#6200EE"));
-        submitButton.setForeground(Color.decode("#FFFFFF"));
-        submitButton.setBorderPainted(false);
-        submitButton.setFont(new Font("Lato", Font.PLAIN, 15));
+        styleButton(submitButton);
         submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JButton cancelButton = new JButton("Exit");
-        cancelButton.setBackground(Color.decode("#6200EE"));
-        cancelButton.setForeground(Color.decode("#FFFFFF"));
-        cancelButton.setBorderPainted(false);
-        cancelButton.setFont(new Font("Lato", Font.PLAIN, 15));
+        styleButton(cancelButton);
         cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         controlPanel.add(okButton);
@@ -93,5 +84,12 @@ public class GuiView extends View {
     @Override
     public void displayEndView(Score score) {
 
+    }
+
+    private void styleButton(JButton button) {
+        button.setBackground(Color.decode("#6200EE"));
+        button.setForeground(Color.decode("#FFFFFF"));
+        button.setBorderPainted(false);
+        button.setFont(new Font("Lato", Font.PLAIN, 15));
     }
 }
