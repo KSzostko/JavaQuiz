@@ -6,6 +6,6 @@ public class Main {
 //        View textView = new TextView();
 
         View guiView = new GuiView();
-        guiView.displayStartView();
+        guiView.displayQuizTypeView();
     }
 }

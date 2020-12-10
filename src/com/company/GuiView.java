@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 public class GuiView extends View {
     @Override
@@ -68,7 +69,58 @@ public class GuiView extends View {
 
     @Override
     public void displayQuizTypeView() {
+        JFrame mainFrame;
+        JLabel headerLabel;
+        JPanel controlPanel;
 
+        mainFrame = new JFrame("Java SWING Examples");
+        mainFrame.setSize(600,500);
+        mainFrame.setLayout(new BorderLayout(20, 60));
+        mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
+
+        headerLabel = new JLabel("",JLabel.CENTER);
+
+        mainFrame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent){
+                System.exit(0);
+            }
+        });
+
+        controlPanel = new JPanel();
+        controlPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 20));
+        controlPanel.setBackground(Color.WHITE);
+
+        mainFrame.add(headerLabel, BorderLayout.PAGE_START);
+        mainFrame.add(controlPanel, BorderLayout.CENTER);
+        mainFrame.setVisible(true);
+
+        headerLabel.setText("Choose a quiz type:");
+        headerLabel.setFont(new Font("Lato", Font.BOLD, 20));
+        // @TODO: create custom method for setting margin instead of these 3 lines below
+        Border border = headerLabel.getBorder();
+        Border margin = new EmptyBorder(50, 10, 10, 10);
+        headerLabel.setBorder(new CompoundBorder(border, margin));
+
+        List<String> quizTypes = Quiz.getTypes();
+        for(String type: quizTypes) {
+            JButton quizButton = new JButton(type);
+            styleButton(quizButton);
+
+            controlPanel.add(quizButton);
+
+//            this is jus for wrapping testing
+//            JButton quizButton2 = new JButton(type);
+//            styleButton(quizButton2);
+//
+//            controlPanel.add(quizButton2);
+//
+//            JButton quizButton3 = new JButton(type);
+//            styleButton(quizButton3);
+//
+//            controlPanel.add(quizButton3);
+        }
+
+        mainFrame.setVisible(true);
     }
 
     @Override
