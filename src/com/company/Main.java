@@ -6,6 +6,7 @@ public class Main {
 //        View textView = new TextView();
 
         View guiView = new GuiView();
-        guiView.displayEndView(new Score("Anon", "test", 125));
+//        guiView.displayEndView(new Score("Anon", "test", 125));
+        guiView.displayLeadersView();
     }
 }
