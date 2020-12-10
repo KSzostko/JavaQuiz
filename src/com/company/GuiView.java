@@ -130,7 +130,59 @@ public class GuiView extends View {
 
     @Override
     public void displayEndView(Score score) {
+        JFrame mainFrame;
+        JLabel headerLabel;
+        JPanel controlPanel;
 
+        mainFrame = new JFrame("Java SWING Examples");
+        mainFrame.setSize(600,500);
+        mainFrame.setLayout(new BorderLayout(20, 60));
+        mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
+
+        headerLabel = new JLabel("",JLabel.CENTER);
+
+        mainFrame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent windowEvent){
+                System.exit(0);
+            }
+        });
+
+        controlPanel = new JPanel();
+        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
+        controlPanel.setBackground(Color.WHITE);
+
+        mainFrame.add(headerLabel, BorderLayout.PAGE_START);
+        mainFrame.add(controlPanel, BorderLayout.CENTER);
+        mainFrame.setVisible(true);
+
+        String congratsString = "<html>Congratulations " + score.getUsername() + "!<br/>" +
+                "You scored " + score.getPoints() + " points in the " + score.getQuizType() + " quiz!<html/>";
+        headerLabel.setText(congratsString);
+        headerLabel.setFont(new Font("Lato", Font.BOLD, 20));
+        addMargin(headerLabel, 50, 10, 10, 10);
+
+        JButton okButton = new JButton("New Game");
+        styleButton(okButton);
+        okButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton submitButton = new JButton("Leaderboard");
+        styleButton(submitButton);
+        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton cancelButton = new JButton("Exit");
+        styleButton(cancelButton);
+        cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        controlPanel.add(okButton);
+        // spacing between objects
+        controlPanel.add(Box.createVerticalStrut(20));
+
+        controlPanel.add(submitButton);
+        controlPanel.add(Box.createVerticalStrut(20));
+
+        controlPanel.add(cancelButton);
+
+        mainFrame.setVisible(true);
     }
 
     private void styleButton(JButton button) {
