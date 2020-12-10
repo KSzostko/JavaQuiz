@@ -39,9 +39,7 @@ public class GuiView extends View {
 
         headerLabel.setText("Welcome to the Quiz app!");
         headerLabel.setFont(new Font("Lato", Font.BOLD, 20));
-        Border border = headerLabel.getBorder();
-        Border margin = new EmptyBorder(50, 10, 10, 10);
-        headerLabel.setBorder(new CompoundBorder(border, margin));
+        addMargin(headerLabel, 50, 10, 10, 10);
 
         JButton okButton = new JButton("New Game");
         styleButton(okButton);
@@ -96,10 +94,7 @@ public class GuiView extends View {
 
         headerLabel.setText("Choose a quiz type:");
         headerLabel.setFont(new Font("Lato", Font.BOLD, 20));
-        // @TODO: create custom method for setting margin instead of these 3 lines below
-        Border border = headerLabel.getBorder();
-        Border margin = new EmptyBorder(50, 10, 10, 10);
-        headerLabel.setBorder(new CompoundBorder(border, margin));
+        addMargin(headerLabel, 50, 10, 10, 10);
 
         List<String> quizTypes = Quiz.getTypes();
         for(String type: quizTypes) {
@@ -143,5 +138,11 @@ public class GuiView extends View {
         button.setForeground(Color.decode("#FFFFFF"));
         button.setBorderPainted(false);
         button.setFont(new Font("Lato", Font.PLAIN, 15));
+    }
+
+    private void addMargin(JComponent cmp, int top, int left, int bottom, int right) {
+        Border border = cmp.getBorder();
+        Border margin = new EmptyBorder(top, left, bottom, right);
+        cmp.setBorder(new CompoundBorder(border, margin));
     }
 }
