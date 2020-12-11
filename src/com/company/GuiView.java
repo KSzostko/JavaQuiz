@@ -13,6 +13,7 @@ import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class GuiView extends View {
     private JFrame mainFrame;
@@ -21,6 +22,7 @@ public class GuiView extends View {
     private final PointsCalculator pointsCalculator;
     private final HintsChecker hintsChecker;
     private Map<String, JButton> answerButtons;
+    private String username;
     private long currentTime;
 
     private enum Dialog {
@@ -46,6 +48,44 @@ public class GuiView extends View {
                 System.exit(0);
             }
         });
+
+        enterName();
+    }
+
+    private void enterName() {
+        mainFrame.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
+
+        JLabel inputLabel = new JLabel("Enter your name:", JLabel.LEFT);
+        addMargin(inputLabel, 0, 150, 0, 0);
+        inputLabel.setPreferredSize(new Dimension(600, 20));
+        inputLabel.setFont(new Font("Lato", Font.BOLD, 15));
+
+        JTextField textField = new JTextField();
+        textField.setPreferredSize(new Dimension(300, 30));
+
+        JButton submitButton = new JButton("Submit");
+        styleButton(submitButton);
+        submitButton.setPreferredSize(new Dimension(300, 30));
+
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String inputText = textField.getText();
+                if(Pattern.matches("[a-zA-Z]+[0-9]*", inputText)) {
+                    username = inputText;
+                    displayStartView();
+                } else {
+                    displayDialog("Username must contain at least one letter and optionally numbers", Dialog.NORMAL);
+                    textField.setText("");
+                }
+            }
+        });
+
+        mainFrame.add(inputLabel);
+        mainFrame.add(textField);
+        mainFrame.add(submitButton);
+
+        mainFrame.setVisible(true);
     }
 
     @Override
@@ -188,6 +228,8 @@ public class GuiView extends View {
 
     @Override
     public void displayEndView(Score score) {
+        leaderboard.addScore(score);
+
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
 
@@ -248,7 +290,7 @@ public class GuiView extends View {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // hardcoded values for testing now
-                displayEndView(new Score("Anon", "test", 125));
+                displayEndView(new Score(username, quiz.getType(), pointsCalculator.getPoints()));
             }
         });
 
@@ -480,11 +522,11 @@ public class GuiView extends View {
             } else {
                 displayDialog("Congratulations! You made it to the end!", Dialog.NORMAL);
                 // hardcoded name for testing now
-                displayEndView(new Score("Anon", quiz.getType(), pointsCalculator.getPoints()));
+                displayEndView(new Score(username, quiz.getType(), pointsCalculator.getPoints()));
             }
         } else {
             displayDialog("Ooops! Not this time bro!", Dialog.NORMAL);
-            displayEndView(new Score("Anon", quiz.getType(), pointsCalculator.getPoints()));
+            displayEndView(new Score(username, quiz.getType(), pointsCalculator.getPoints()));
         }
     }
 
