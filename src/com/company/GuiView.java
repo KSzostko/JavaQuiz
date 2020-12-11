@@ -1,8 +1,5 @@
 package com.company;
 
-import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -160,14 +157,14 @@ public class GuiView extends View {
         mainFrame.add(controlPanel, BorderLayout.PAGE_END);
         mainFrame.setVisible(true);
 
-        // @TODO: Display question text in multiple lines
-        questionLabel.setText(question.getQuestionText());
+        String multilineString = wrapQuestionText(question.getQuestionText());
+        questionLabel.setText(multilineString);
         questionLabel.setFont(new Font("Lato", Font.BOLD, 20));
         addMargin(questionLabel, 7, 10, 0, 10);
 
         addAnswersButtons(controlPanel, question);
 
-        addMargin(controlPanel, 0, 40, 200, 40);
+        addMargin(controlPanel, 0, 40, 150, 40);
 
         mainFrame.setVisible(true);
     }
@@ -264,6 +261,33 @@ public class GuiView extends View {
         menuBar.add(hintsMenu);
 
         return menuBar;
+    }
+
+    private String wrapQuestionText(String text) {
+        String[] words = text.split(" ");
+        final int BREAK_LINE = 50;
+        int currentLineLength = 0;
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("<html>");
+        for(String word: words) {
+            if(currentLineLength + word.length() + 1 <= BREAK_LINE) {
+                if(builder.length() != 6) {
+                    builder.append(" ");
+                    currentLineLength++;
+                }
+
+                builder.append(word);
+                currentLineLength += word.length();
+            } else {
+                builder.append("<br/>");
+                builder.append(word);
+                currentLineLength = word.length();
+            }
+        }
+        builder.append("<html/");
+
+        return builder.toString();
     }
 
     private void addAnswersButtons(JPanel controlPanel, Question question) {
