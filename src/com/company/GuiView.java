@@ -134,7 +134,29 @@ public class GuiView extends View {
 
     @Override
     public void displayQuestionView(Question question) {
+        clearScreen();
+        mainFrame.setLayout(new BorderLayout(20, 60));
 
+        JMenuBar menuBar = addMenuBar();
+
+        JLabel questionLabel = new JLabel("", JLabel.CENTER);
+
+        JPanel controlPanel = new JPanel();
+        controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
+        controlPanel.setBackground(Color.WHITE);
+
+        mainFrame.add(menuBar, BorderLayout.PAGE_START);
+        mainFrame.add(questionLabel, BorderLayout.CENTER);
+        mainFrame.add(controlPanel, BorderLayout.PAGE_END);
+        mainFrame.setVisible(true);
+
+        questionLabel.setText(question.getQuestionText());
+        questionLabel.setFont(new Font("Lato", Font.BOLD, 20));
+        addMargin(questionLabel, 7, 10, 0, 10);
+
+        addMargin(controlPanel, 0, 0, 20, 0);
+
+        mainFrame.setVisible(true);
     }
 
     @Override
@@ -179,6 +201,33 @@ public class GuiView extends View {
     private void clearScreen() {
         mainFrame.getContentPane().removeAll();
         mainFrame.validate();
+    }
+
+    private JMenuBar addMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu optionsMenu = new JMenu("Options");
+        JMenuItem restartItem = new JMenuItem("Restart");
+        JMenuItem endQuizItem = new JMenuItem("End Quiz");
+        JMenuItem mainMenuItem = new JMenuItem("Menu");
+        optionsMenu.add(restartItem);
+        optionsMenu.add(endQuizItem);
+        optionsMenu.add(mainMenuItem);
+
+        JMenu hintsMenu = new JMenu("Hints");
+        JMenuItem aboutItem = new JMenuItem("About");
+        JMenuItem fiftyItem = new JMenuItem("50:50");
+        JMenuItem expertItem = new JMenuItem("Phone Expert");
+        JMenuItem audienceItem = new JMenuItem("Audience Choice");
+        hintsMenu.add(aboutItem);
+        hintsMenu.add(fiftyItem);
+        hintsMenu.add(expertItem);
+        hintsMenu.add(audienceItem);
+
+        menuBar.add(optionsMenu);
+        menuBar.add(hintsMenu);
+
+        return menuBar;
     }
 
     private void addNavButtons(JPanel controlPanel, boolean less) {
