@@ -1,5 +1,8 @@
 package com.company;
 
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -16,9 +19,12 @@ public class GuiView extends View {
     private JFrame mainFrame;
     private Quiz quiz;
     private Leaderboard leaderboard;
+    private final PointsCalculator pointsCalculator;
+    private long currentTime;
 
     public GuiView() {
         leaderboard = new Leaderboard();
+        pointsCalculator = new PointsCalculator();
         initializeScreen();
     }
 
@@ -59,6 +65,8 @@ public class GuiView extends View {
 
     @Override
     public void displayQuizTypeView() {
+        pointsCalculator.resetPoints();
+
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
 
@@ -134,6 +142,8 @@ public class GuiView extends View {
 
     @Override
     public void displayQuestionView(Question question) {
+        currentTime = System.currentTimeMillis();
+
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
 
@@ -150,6 +160,7 @@ public class GuiView extends View {
         mainFrame.add(controlPanel, BorderLayout.PAGE_END);
         mainFrame.setVisible(true);
 
+        // @TODO: Display question text in multiple lines
         questionLabel.setText(question.getQuestionText());
         questionLabel.setFont(new Font("Lato", Font.BOLD, 20));
         addMargin(questionLabel, 7, 10, 0, 10);
@@ -269,21 +280,61 @@ public class GuiView extends View {
         styleButton(button1);
         upPanel.add(button1);
         upPanel.add(Box.createHorizontalGlue());
+        addButtonListener(button1, 0, question);
+
         JButton button2 = new JButton("B. " + answers[1]);
         styleButton(button2);
         upPanel.add(button2);
+        addButtonListener(button2, 1, question);
 
         JButton button3 = new JButton("C. " + answers[2]);
         styleButton(button3);
         downPanel.add(button3);
         downPanel.add(Box.createHorizontalGlue());
+        addButtonListener(button3, 2, question);
+
         JButton button4 = new JButton("D." + answers[3]);
         styleButton(button4);
         downPanel.add(button4);
+        addButtonListener(button4, 3, question);
 
         controlPanel.add(upPanel);
         controlPanel.add(Box.createVerticalStrut(20));
         controlPanel.add(downPanel);
+    }
+
+    private void addButtonListener(JButton button, int answerId, Question question) {
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkSelectedAnswer(answerId, question);
+            }
+        });
+    }
+
+    private void checkSelectedAnswer(int answerId, Question question) {
+        if(question.checkAnswer(answerId)) {
+            // @Todo: display dialog about good answer
+
+            int questionNumber = quiz.getCurrentQuestionNumber();
+            int questionTime = (int) (System.currentTimeMillis() - currentTime) / 1000;
+
+            pointsCalculator.calculatePoints(questionNumber, questionTime);
+
+            quiz.nextQuestion();
+            questionNumber = quiz.getCurrentQuestionNumber();
+
+            if(questionNumber != -1) {
+                Question nextQuestion = quiz.getQuestion();
+                displayQuestionView(nextQuestion);
+            } else {
+                // hardcoded name for testing now
+                displayEndView(new Score("Anon", quiz.getType(), pointsCalculator.getPoints()));
+            }
+        } else {
+            // @Todo: display dialog about bad answer
+            displayEndView(new Score("Anon", quiz.getType(), pointsCalculator.getPoints()));
+        }
     }
 
     private void addNavButtons(JPanel controlPanel, boolean less) {
