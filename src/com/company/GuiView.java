@@ -6,35 +6,41 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class GuiView extends View {
+    JFrame mainFrame;
     Leaderboard leaderboard;
 
     public GuiView() {
         leaderboard = new Leaderboard();
+        initializeScreen();
     }
 
-    @Override
-    public void displayStartView() {
-        JFrame mainFrame;
-        JLabel headerLabel;
-        JPanel controlPanel;
-
-        mainFrame = new JFrame("Java SWING Examples");
-        mainFrame.setSize(600,500);
-        mainFrame.setLayout(new BorderLayout(20, 60));
-        mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
-
-        headerLabel = new JLabel("",JLabel.CENTER);
-
+    private void initializeScreen() {
+        mainFrame = new JFrame("Quizapp");
+        mainFrame.setSize(600, 500);
         mainFrame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent){
                 System.exit(0);
             }
         });
+    }
+
+    @Override
+    public void displayStartView() {
+        JLabel headerLabel;
+        JPanel controlPanel;
+
+        clearScreen();
+        mainFrame.setLayout(new BorderLayout(20, 60));
+        mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
+
+        headerLabel = new JLabel("",JLabel.CENTER);
 
         controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
@@ -51,10 +57,22 @@ public class GuiView extends View {
         JButton okButton = new JButton("New Game");
         styleButton(okButton);
         okButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayQuizTypeView();
+            }
+        });
 
         JButton submitButton = new JButton("Leaderboard");
         styleButton(submitButton);
         submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayLeadersView();
+            }
+        });
 
         JButton cancelButton = new JButton("Exit");
         styleButton(cancelButton);
@@ -74,22 +92,14 @@ public class GuiView extends View {
 
     @Override
     public void displayQuizTypeView() {
-        JFrame mainFrame;
         JLabel headerLabel;
         JPanel controlPanel;
 
-        mainFrame = new JFrame("Java SWING Examples");
-        mainFrame.setSize(600,500);
+        clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
         mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
 
         headerLabel = new JLabel("",JLabel.CENTER);
-
-        mainFrame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent windowEvent){
-                System.exit(0);
-            }
-        });
 
         controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 20));
@@ -127,22 +137,14 @@ public class GuiView extends View {
 
     @Override
     public void displayLeadersView() {
-        JFrame mainFrame;
         JLabel headerLabel;
         JPanel controlPanel;
 
-        mainFrame = new JFrame("Java SWING Examples");
-        mainFrame.setSize(600,500);
+        clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
         mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
 
         headerLabel = new JLabel("",JLabel.CENTER);
-
-        mainFrame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent windowEvent){
-                System.exit(0);
-            }
-        });
 
         controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
@@ -189,9 +191,15 @@ public class GuiView extends View {
         styleButton(okButton);
         okButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton submitButton = new JButton("Leaderboard");
+        JButton submitButton = new JButton("Main Menu");
         styleButton(submitButton);
         submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayStartView();
+            }
+        });
 
         JButton cancelButton = new JButton("Exit");
         styleButton(cancelButton);
@@ -222,22 +230,14 @@ public class GuiView extends View {
 
     @Override
     public void displayEndView(Score score) {
-        JFrame mainFrame;
         JLabel headerLabel;
         JPanel controlPanel;
 
-        mainFrame = new JFrame("Java SWING Examples");
-        mainFrame.setSize(600,500);
+        clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
         mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
 
         headerLabel = new JLabel("",JLabel.CENTER);
-
-        mainFrame.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent windowEvent){
-                System.exit(0);
-            }
-        });
 
         controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
@@ -288,6 +288,11 @@ public class GuiView extends View {
         Border border = cmp.getBorder();
         Border margin = new EmptyBorder(top, left, bottom, right);
         cmp.setBorder(new CompoundBorder(border, margin));
+    }
+
+    private void clearScreen() {
+        mainFrame.getContentPane().removeAll();
+        mainFrame.validate();
     }
 
     private JTable createRankingTable() {
