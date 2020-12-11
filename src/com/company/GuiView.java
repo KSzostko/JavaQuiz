@@ -164,7 +164,7 @@ public class GuiView extends View {
         mainFrame.add(controlPanel, BorderLayout.PAGE_END);
         mainFrame.setVisible(true);
 
-        String multilineString = wrapQuestionText(question.getQuestionText());
+        String multilineString = wrapText(question.getQuestionText());
         questionLabel.setText(multilineString);
         questionLabel.setFont(new Font("Lato", Font.BOLD, 20));
         addMargin(questionLabel, 7, 10, 0, 10);
@@ -266,20 +266,20 @@ public class GuiView extends View {
         });
 
         JMenuItem fiftyItem = new JMenuItem("50:50");
+
         JMenuItem expertItem = new JMenuItem("Phone Expert");
+        expertItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                usePhoneExpertHint(answers, correctAnswer);
+            }
+        });
 
         JMenuItem audienceItem = new JMenuItem("Audience Choice");
         audienceItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String audienceAnswer = Audience.vote(answers, correctAnswer);
-                audienceAnswer = audienceAnswer.replace("\n", "<br/>");
-
-                StringBuilder builder = new StringBuilder();
-                builder.append("<html>");
-                builder.append(audienceAnswer);
-                builder.append("<html/>");
-                displayDialog(builder.toString(), Dialog.AUDIENCE);
+                useAudienceChoiceHint(answers, correctAnswer);
             }
         });
 
@@ -294,7 +294,26 @@ public class GuiView extends View {
         return menuBar;
     }
 
-    private String wrapQuestionText(String text) {
+    private void usePhoneExpertHint(String[] answers, int correctAnswer) {
+        Expert expert = new Expert();
+        String finalString = expert.getExpertAnswer(answers, correctAnswer);
+
+        String wrappedString = wrapText(finalString);
+        displayDialog(wrappedString, Dialog.EXPERT);
+    }
+
+    private void useAudienceChoiceHint(String[] answers, int correctAnswer) {
+        String audienceAnswer = Audience.vote(answers, correctAnswer);
+        audienceAnswer = audienceAnswer.replace("\n", "<br/>");
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("<html>");
+        builder.append(audienceAnswer);
+        builder.append("<html/>");
+        displayDialog(builder.toString(), Dialog.AUDIENCE);
+    }
+
+    private String wrapText(String text) {
         String[] words = text.split(" ");
         final int BREAK_LINE = 50;
         int currentLineLength = 0;
@@ -329,8 +348,6 @@ public class GuiView extends View {
 
         if(dialogType == Dialog.AUDIENCE) {
             label.setPreferredSize(new Dimension(400, 60));
-        } else if(dialogType == Dialog.EXPERT) {
-            label.setPreferredSize(new Dimension(400, 40));
         } else {
             label.setPreferredSize(new Dimension(400, 40));
         }
@@ -347,14 +364,7 @@ public class GuiView extends View {
         dialog.add(label);
         dialog.add(okButton);
 
-        if(dialogType == Dialog.AUDIENCE) {
-            dialog.setSize(400, 180);
-        } else if(dialogType == Dialog.EXPERT) {
-            dialog.setSize(400, 180);
-        } else {
-            dialog.setSize(400, 180);
-        }
-
+        dialog.setSize(400, 180);
         dialog.setLocationRelativeTo(mainFrame);
         dialog.setVisible(true);
     }
