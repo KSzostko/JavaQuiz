@@ -10,8 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GuiView extends View {
     private JFrame mainFrame;
@@ -19,6 +20,7 @@ public class GuiView extends View {
     private Leaderboard leaderboard;
     private final PointsCalculator pointsCalculator;
     private final HintsChecker hintsChecker;
+    private Map<String, JButton> answerButtons;
     private long currentTime;
 
     private enum Dialog {
@@ -31,6 +33,7 @@ public class GuiView extends View {
         leaderboard = new Leaderboard();
         pointsCalculator = new PointsCalculator();
         hintsChecker = new HintsChecker();
+        answerButtons = new HashMap<>();
         initializeScreen();
     }
 
@@ -156,17 +159,19 @@ public class GuiView extends View {
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
 
-        JMenuBar menuBar = addMenuBar(question.getAnswers(), question.getCorrectAnswer());
-
         JLabel questionLabel = new JLabel("", JLabel.CENTER);
 
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
         controlPanel.setBackground(Color.WHITE);
 
-        mainFrame.add(menuBar, BorderLayout.PAGE_START);
         mainFrame.add(questionLabel, BorderLayout.CENTER);
         mainFrame.add(controlPanel, BorderLayout.PAGE_END);
+
+        // it should be added as last, to be able to access all components of the frame
+        JMenuBar menuBar = addMenuBar(question.getAnswers(), question.getCorrectAnswer());
+        mainFrame.add(menuBar, BorderLayout.PAGE_START);
+
         mainFrame.setVisible(true);
 
         String multilineString = wrapText(question.getQuestionText());
@@ -323,9 +328,11 @@ public class GuiView extends View {
     private void useFiftyFiftyHint(String[] answers, int correctAnswer) {
         String[] removedAnswers = Fifty.chooseRemoved(answers, correctAnswer);
 
-        Component[] componentList = mainFrame.getComponents();
-        System.out.println(Arrays.toString(componentList));
-        displayDialog("Siema", Dialog.NORMAL);
+        JButton button1 = answerButtons.get(removedAnswers[0]);
+        JButton button2 = answerButtons.get(removedAnswers[1]);
+
+        button1.setVisible(false);
+        button2.setVisible(false);
     }
 
     private void usePhoneExpertHint(String[] answers, int correctAnswer) {
@@ -404,6 +411,7 @@ public class GuiView extends View {
     }
 
     private void addAnswersButtons(JPanel controlPanel, Question question) {
+        answerButtons.clear();
         String[] answers = question.getAnswers();
 
         JPanel upPanel = new JPanel();
@@ -434,6 +442,11 @@ public class GuiView extends View {
         styleButton(button4);
         downPanel.add(button4);
         addButtonListener(button4, 3, question);
+
+        answerButtons.put(answers[0], button1);
+        answerButtons.put(answers[1], button2);
+        answerButtons.put(answers[2], button3);
+        answerButtons.put(answers[3], button4);
 
         controlPanel.add(upPanel);
         controlPanel.add(Box.createVerticalStrut(20));
