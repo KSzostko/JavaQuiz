@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.List;
 
 public class GuiView extends View {
@@ -17,6 +18,7 @@ public class GuiView extends View {
     private Quiz quiz;
     private Leaderboard leaderboard;
     private final PointsCalculator pointsCalculator;
+    private final HintsChecker hintsChecker;
     private long currentTime;
 
     private enum Dialog {
@@ -28,6 +30,7 @@ public class GuiView extends View {
     public GuiView() {
         leaderboard = new Leaderboard();
         pointsCalculator = new PointsCalculator();
+        hintsChecker = new HintsChecker();
         initializeScreen();
     }
 
@@ -68,6 +71,7 @@ public class GuiView extends View {
 
     @Override
     public void displayQuizTypeView() {
+        hintsChecker.clearUsedHints();
         pointsCalculator.resetPoints();
 
         clearScreen();
@@ -147,6 +151,7 @@ public class GuiView extends View {
     @Override
     public void displayQuestionView(Question question) {
         currentTime = System.currentTimeMillis();
+        hintsChecker.clearWasUsed();
 
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
@@ -260,18 +265,34 @@ public class GuiView extends View {
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                displayDialog("<html>You can use one hint only once in the game. You can only use<br/> one hint per question.",
+                displayDialog("<html>You can use one hint only once in the game. You can only use<br/> one hint per question.<html/>",
                         Dialog.NORMAL);
             }
         });
 
         JMenuItem fiftyItem = new JMenuItem("50:50");
+        fiftyItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(hintsChecker.canUseHint(Hint.FIFTYFYFTY)) {
+                    useFiftyFiftyHint(answers, correctAnswer);
+                } else {
+                    displayDialog("<html>You can't use this hint right now.<br/>" +
+                            "You either used it before or used other hint for this question<html/>", Dialog.NORMAL);
+                }
+            }
+        });
 
         JMenuItem expertItem = new JMenuItem("Phone Expert");
         expertItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                usePhoneExpertHint(answers, correctAnswer);
+                if(hintsChecker.canUseHint(Hint.EXPERT)) {
+                    usePhoneExpertHint(answers, correctAnswer);
+                } else {
+                    displayDialog("<html>You can't use this hint right now.<br/>" +
+                            "You either used it before or used other hint for this question<html/>", Dialog.NORMAL);
+                }
             }
         });
 
@@ -279,7 +300,12 @@ public class GuiView extends View {
         audienceItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                useAudienceChoiceHint(answers, correctAnswer);
+                if(hintsChecker.canUseHint(Hint.AUDIENCE)) {
+                    useAudienceChoiceHint(answers, correctAnswer);
+                } else {
+                    displayDialog("<html>You can't use this hint right now.<br/>" +
+                            "You either used it before or used other hint for this question<html/>", Dialog.NORMAL);
+                }
             }
         });
 
@@ -292,6 +318,14 @@ public class GuiView extends View {
         menuBar.add(hintsMenu);
 
         return menuBar;
+    }
+
+    private void useFiftyFiftyHint(String[] answers, int correctAnswer) {
+        String[] removedAnswers = Fifty.chooseRemoved(answers, correctAnswer);
+
+        Component[] componentList = mainFrame.getComponents();
+        System.out.println(Arrays.toString(componentList));
+        displayDialog("Siema", Dialog.NORMAL);
     }
 
     private void usePhoneExpertHint(String[] answers, int correctAnswer) {
