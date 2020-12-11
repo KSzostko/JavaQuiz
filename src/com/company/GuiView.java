@@ -209,9 +209,32 @@ public class GuiView extends View {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu optionsMenu = new JMenu("Options");
+
         JMenuItem restartItem = new JMenuItem("Restart");
+        restartItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayQuizTypeView();
+            }
+        });
+
         JMenuItem endQuizItem = new JMenuItem("End Quiz");
+        endQuizItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // hardcoded values for testing now
+                displayEndView(new Score("Anon", "test", 125));
+            }
+        });
+
         JMenuItem mainMenuItem = new JMenuItem("Menu");
+        mainMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayStartView();
+            }
+        });
+
         optionsMenu.add(restartItem);
         optionsMenu.add(endQuizItem);
         optionsMenu.add(mainMenuItem);
