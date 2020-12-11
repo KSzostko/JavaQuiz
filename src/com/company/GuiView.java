@@ -249,7 +249,15 @@ public class GuiView extends View {
         optionsMenu.add(mainMenuItem);
 
         JMenu hintsMenu = new JMenu("Hints");
+
         JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayDialog("<html>You can use one hint only once in the game. You can only use<br/> one hint per question.");
+            }
+        });
+
         JMenuItem fiftyItem = new JMenuItem("50:50");
         JMenuItem expertItem = new JMenuItem("Phone Expert");
         JMenuItem audienceItem = new JMenuItem("Audience Choice");
@@ -296,6 +304,7 @@ public class GuiView extends View {
         dialog.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 20));
 
         JLabel label = new JLabel(message, JLabel.CENTER);
+        label.setPreferredSize(new Dimension(400, 40));
 
         JButton okButton = new JButton("Ok");
         styleButton(okButton);
@@ -308,7 +317,7 @@ public class GuiView extends View {
 
         dialog.add(label);
         dialog.add(okButton);
-        dialog.setSize(400, 150);
+        dialog.setSize(400, 180);
         dialog.setLocationRelativeTo(mainFrame);
         dialog.setVisible(true);
     }
@@ -361,7 +370,7 @@ public class GuiView extends View {
 
     private void checkSelectedAnswer(int answerId, Question question) {
         if(question.checkAnswer(answerId)) {
-            // @Todo: display dialog about good answer
+            displayDialog("Bravo! This is the correct answer!");
 
             int questionNumber = quiz.getCurrentQuestionNumber();
             int questionTime = (int) (System.currentTimeMillis() - currentTime) / 1000;
@@ -375,11 +384,12 @@ public class GuiView extends View {
                 Question nextQuestion = quiz.getQuestion();
                 displayQuestionView(nextQuestion);
             } else {
+                displayDialog("Congratulations! You made it to the end!");
                 // hardcoded name for testing now
                 displayEndView(new Score("Anon", quiz.getType(), pointsCalculator.getPoints()));
             }
         } else {
-            // @Todo: display dialog about bad answer
+            displayDialog("Ooops! Not this time bro!");
             displayEndView(new Score("Anon", quiz.getType(), pointsCalculator.getPoints()));
         }
     }
