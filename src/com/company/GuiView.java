@@ -111,20 +111,7 @@ public class GuiView extends View {
         mainFrame.add(leadersLabel, BorderLayout.PAGE_START);
 
         JTable table = createRankingTable();
-
-        // centering position number in the table
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-
-        table.setFont(new Font("Lato", Font.PLAIN, 12));
-        table.setGridColor(Color.decode("#DDDDDD"));
-        table.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.BLACK));
-
-        JTableHeader tableHeader = table.getTableHeader();
-        tableHeader.setBackground(Color.WHITE);
-        tableHeader.setFont(new Font("Lato", Font.BOLD, 12));
-        tableHeader.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
+        styleTable(table);
 
         // without scrollPane column names weren't visible
         JScrollPane scrollPane = new JScrollPane(table);
@@ -133,7 +120,6 @@ public class GuiView extends View {
         scrollPane.setBorder(BorderFactory.createMatteBorder(10, 100, 0, 100, Color.WHITE));
 
         mainFrame.add(scrollPane, BorderLayout.CENTER);
-
         mainFrame.add(controlPanel, BorderLayout.PAGE_END);
         mainFrame.setVisible(true);
 
@@ -306,5 +292,21 @@ public class GuiView extends View {
         };
 
         return new JTable(dataModel);
+    }
+
+    private void styleTable(JTable table) {
+        // centering position number in the table
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+
+        table.setFont(new Font("Lato", Font.PLAIN, 12));
+        table.setGridColor(Color.decode("#DDDDDD"));
+        table.setBorder(BorderFactory.createMatteBorder(0, 1, 1, 1, Color.BLACK));
+
+        JTableHeader tableHeader = table.getTableHeader();
+        tableHeader.setBackground(Color.WHITE);
+        tableHeader.setFont(new Font("Lato", Font.BOLD, 12));
+        tableHeader.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
     }
 }
