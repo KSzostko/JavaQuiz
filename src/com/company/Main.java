@@ -1,12 +1,28 @@
 package com.company;
 
+import java.util.Scanner;
+
 public class Main {
 
     public static void main(String[] args) {
-//        View textView = new TextView();
+        Scanner scanner = new Scanner(System.in);
 
-        View guiView = new GuiView();
-//        guiView.displayEndView(new Score("Anon", "test", 125));
-//        guiView.displayStartView();
+        System.out.println("Welcome to the quizapp!");
+        System.out.println("To select text-base interface enter 0");
+        System.out.println("To select graphical interface enter 1");
+
+        System.out.println("Enter your choice");
+        int choice = scanner.nextInt();
+        while(choice != 0 && choice != 1) {
+            System.out.println("Wrong number! Please try again.");
+            choice = scanner.nextInt();
+        }
+
+        View view;
+        if(choice == 0) {
+            view = new TextView();
+        } else {
+            view = new GuiView();
+        }
     }
 }
