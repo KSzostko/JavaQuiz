@@ -24,6 +24,7 @@ public class GuiView extends View {
     private void initializeScreen() {
         mainFrame = new JFrame("Quizapp");
         mainFrame.setSize(600, 500);
+        mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
         mainFrame.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent windowEvent){
                 System.exit(0);
@@ -33,75 +34,36 @@ public class GuiView extends View {
 
     @Override
     public void displayStartView() {
-        JLabel headerLabel;
-        JPanel controlPanel;
-
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
-        mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
 
-        headerLabel = new JLabel("",JLabel.CENTER);
+        JLabel welcomeLabel = new JLabel("", JLabel.CENTER);
 
-        controlPanel = new JPanel();
+        JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
         controlPanel.setBackground(Color.WHITE);
 
-        mainFrame.add(headerLabel, BorderLayout.PAGE_START);
+        mainFrame.add(welcomeLabel, BorderLayout.PAGE_START);
         mainFrame.add(controlPanel, BorderLayout.CENTER);
         mainFrame.setVisible(true);
 
-        headerLabel.setText("Welcome to the Quiz app!");
-        headerLabel.setFont(new Font("Lato", Font.BOLD, 20));
-        addMargin(headerLabel, 50, 10, 10, 10);
+        welcomeLabel.setText("Welcome to the Quiz app!");
+        welcomeLabel.setFont(new Font("Lato", Font.BOLD, 20));
+        addMargin(welcomeLabel, 50, 10, 10, 10);
 
-        JButton okButton = new JButton("New Game");
-        styleButton(okButton);
-        okButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        okButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                displayQuizTypeView();
-            }
-        });
-
-        JButton submitButton = new JButton("Leaderboard");
-        styleButton(submitButton);
-        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                displayLeadersView();
-            }
-        });
-
-        JButton cancelButton = new JButton("Exit");
-        styleButton(cancelButton);
-        cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        controlPanel.add(okButton);
-        // spacing between objects
-        controlPanel.add(Box.createVerticalStrut(20));
-
-        controlPanel.add(submitButton);
-        controlPanel.add(Box.createVerticalStrut(20));
-
-        controlPanel.add(cancelButton);
+        addNavButtons(controlPanel, true);
 
         mainFrame.setVisible(true);
     }
 
     @Override
     public void displayQuizTypeView() {
-        JLabel headerLabel;
-        JPanel controlPanel;
-
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
-        mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
 
-        headerLabel = new JLabel("",JLabel.CENTER);
+        JLabel headerLabel = new JLabel("", JLabel.CENTER);
 
-        controlPanel = new JPanel();
+        JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 20));
         controlPanel.setBackground(Color.WHITE);
 
@@ -137,20 +99,16 @@ public class GuiView extends View {
 
     @Override
     public void displayLeadersView() {
-        JLabel headerLabel;
-        JPanel controlPanel;
-
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
-        mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
 
-        headerLabel = new JLabel("",JLabel.CENTER);
+        JLabel leadersLabel = new JLabel("", JLabel.CENTER);
 
-        controlPanel = new JPanel();
+        JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
         controlPanel.setBackground(Color.WHITE);
 
-        mainFrame.add(headerLabel, BorderLayout.PAGE_START);
+        mainFrame.add(leadersLabel, BorderLayout.PAGE_START);
 
         JTable table = createRankingTable();
 
@@ -179,44 +137,11 @@ public class GuiView extends View {
         mainFrame.add(controlPanel, BorderLayout.PAGE_END);
         mainFrame.setVisible(true);
 
-        headerLabel.setText("Leaderboard");
-        headerLabel.setFont(new Font("Lato", Font.BOLD, 20));
-        addMargin(headerLabel, 7, 10, 0, 10);
+        leadersLabel.setText("Leaderboard");
+        leadersLabel.setFont(new Font("Lato", Font.BOLD, 20));
+        addMargin(leadersLabel, 7, 10, 0, 10);
 
-        JButton rankingButton = new JButton("Open full ranking");
-        styleButton(rankingButton);
-        rankingButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JButton okButton = new JButton("New Game");
-        styleButton(okButton);
-        okButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JButton submitButton = new JButton("Main Menu");
-        styleButton(submitButton);
-        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        submitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                displayStartView();
-            }
-        });
-
-        JButton cancelButton = new JButton("Exit");
-        styleButton(cancelButton);
-        cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        controlPanel.add(rankingButton);
-        // spacing between objects
-        controlPanel.add(Box.createVerticalStrut(20));
-
-        controlPanel.add(okButton);
-        // spacing between objects
-        controlPanel.add(Box.createVerticalStrut(20));
-
-        controlPanel.add(submitButton);
-        controlPanel.add(Box.createVerticalStrut(20));
-
-        controlPanel.add(cancelButton);
+        addNavButtons(controlPanel, false);
 
         addMargin(controlPanel, 0, 0, 20, 0);
 
@@ -230,16 +155,12 @@ public class GuiView extends View {
 
     @Override
     public void displayEndView(Score score) {
-        JLabel headerLabel;
-        JPanel controlPanel;
-
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
-        mainFrame.getContentPane().setBackground(Color.decode("#FFFFFF"));
 
-        headerLabel = new JLabel("",JLabel.CENTER);
+        JLabel headerLabel = new JLabel("",JLabel.CENTER);
 
-        controlPanel = new JPanel();
+        JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new BoxLayout(controlPanel, BoxLayout.Y_AXIS));
         controlPanel.setBackground(Color.WHITE);
 
@@ -253,26 +174,7 @@ public class GuiView extends View {
         headerLabel.setFont(new Font("Lato", Font.BOLD, 20));
         addMargin(headerLabel, 50, 10, 10, 10);
 
-        JButton okButton = new JButton("New Game");
-        styleButton(okButton);
-        okButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JButton submitButton = new JButton("Leaderboard");
-        styleButton(submitButton);
-        submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        JButton cancelButton = new JButton("Exit");
-        styleButton(cancelButton);
-        cancelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-        controlPanel.add(okButton);
-        // spacing between objects
-        controlPanel.add(Box.createVerticalStrut(20));
-
-        controlPanel.add(submitButton);
-        controlPanel.add(Box.createVerticalStrut(20));
-
-        controlPanel.add(cancelButton);
+        addNavButtons(controlPanel, true);
 
         mainFrame.setVisible(true);
     }
@@ -293,6 +195,79 @@ public class GuiView extends View {
     private void clearScreen() {
         mainFrame.getContentPane().removeAll();
         mainFrame.validate();
+    }
+
+    private void addNavButtons(JPanel controlPanel, boolean less) {
+        JButton newGameButton = new JButton("New Game");
+        styleButton(newGameButton);
+        newGameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton leadersButton = new JButton("Leaderboard");
+        styleButton(leadersButton);
+        leadersButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton exitButton = new JButton("Exit");
+        styleButton(exitButton);
+        exitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton rankingButton = new JButton("Open full ranking");
+        styleButton(rankingButton);
+        rankingButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton menuButton = new JButton("Main Menu");
+        styleButton(menuButton);
+        menuButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        newGameButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                displayQuizTypeView();
+            }
+        });
+
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+                mainFrame.dispose();
+                mainFrame.setVisible(false);
+            }
+        });
+
+        if (less) {
+            leadersButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    displayLeadersView();
+                }
+            });
+
+            controlPanel.add(newGameButton);
+            // spacing between objects
+            controlPanel.add(Box.createVerticalStrut(20));
+
+            controlPanel.add(leadersButton);
+        } else {
+            // @TODO: full ranking button listener
+
+            menuButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    displayStartView();
+                }
+            });
+
+            controlPanel.add(rankingButton);
+            controlPanel.add(Box.createVerticalStrut(20));
+
+            controlPanel.add(newGameButton);
+            controlPanel.add(Box.createVerticalStrut(20));
+
+            controlPanel.add(menuButton);
+        }
+
+        controlPanel.add(Box.createVerticalStrut(20));
+        controlPanel.add(exitButton);
     }
 
     private JTable createRankingTable() {
