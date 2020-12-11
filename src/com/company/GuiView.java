@@ -13,8 +13,9 @@ import java.awt.event.WindowEvent;
 import java.util.List;
 
 public class GuiView extends View {
-    JFrame mainFrame;
-    Leaderboard leaderboard;
+    private JFrame mainFrame;
+    private Quiz quiz;
+    private Leaderboard leaderboard;
 
     public GuiView() {
         leaderboard = new Leaderboard();
@@ -80,18 +81,15 @@ public class GuiView extends View {
             JButton quizButton = new JButton(type);
             styleButton(quizButton);
 
-            controlPanel.add(quizButton);
+            quizButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quiz = new Quiz(e.getActionCommand());
+                    displayQuestionView(quiz.getQuestion());
+                }
+            });
 
-//            this is jus for wrapping testing
-//            JButton quizButton2 = new JButton(type);
-//            styleButton(quizButton2);
-//
-//            controlPanel.add(quizButton2);
-//
-//            JButton quizButton3 = new JButton(type);
-//            styleButton(quizButton3);
-//
-//            controlPanel.add(quizButton3);
+            controlPanel.add(quizButton);
         }
 
         mainFrame.setVisible(true);
