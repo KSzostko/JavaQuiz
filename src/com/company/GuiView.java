@@ -154,7 +154,35 @@ public class GuiView extends View {
         questionLabel.setFont(new Font("Lato", Font.BOLD, 20));
         addMargin(questionLabel, 7, 10, 0, 10);
 
-        addMargin(controlPanel, 0, 0, 20, 0);
+        String[] answers = question.getAnswers();
+        JPanel upPanel = new JPanel();
+        upPanel.setLayout(new BoxLayout(upPanel, BoxLayout.X_AXIS));
+        upPanel.setBackground(Color.WHITE);
+        JPanel downPanel = new JPanel();
+        downPanel.setLayout(new BoxLayout(downPanel, BoxLayout.X_AXIS));
+        downPanel.setBackground(Color.WHITE);
+
+        JButton button1 = new JButton("A. " + answers[0]);
+        styleButton(button1);
+        upPanel.add(button1);
+        upPanel.add(Box.createHorizontalGlue());
+        JButton button2 = new JButton("B. " + answers[1]);
+        styleButton(button2);
+        upPanel.add(button2);
+
+        JButton button3 = new JButton("C. " + answers[2]);
+        styleButton(button3);
+        downPanel.add(button3);
+        downPanel.add(Box.createHorizontalGlue());
+        JButton button4 = new JButton("D." + answers[3]);
+        styleButton(button4);
+        downPanel.add(button4);
+
+        controlPanel.add(upPanel);
+        controlPanel.add(Box.createVerticalStrut(20));
+        controlPanel.add(downPanel);
+
+        addMargin(controlPanel, 0, 40, 200, 40);
 
         mainFrame.setVisible(true);
     }
