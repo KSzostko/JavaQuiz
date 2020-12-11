@@ -19,6 +19,12 @@ public class GuiView extends View {
     private final PointsCalculator pointsCalculator;
     private long currentTime;
 
+    private enum Dialog {
+        NORMAL,
+        EXPERT,
+        AUDIENCE
+    }
+
     public GuiView() {
         leaderboard = new Leaderboard();
         pointsCalculator = new PointsCalculator();
@@ -90,7 +96,7 @@ public class GuiView extends View {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     quiz = new Quiz(e.getActionCommand());
-                    displayDialog("You can get bonus points if you will answer questions fast enough");
+                    displayDialog("You can get bonus points if you will answer questions fast enough", Dialog.NORMAL);
                     displayQuestionView(quiz.getQuestion());
                 }
             });
@@ -145,7 +151,7 @@ public class GuiView extends View {
         clearScreen();
         mainFrame.setLayout(new BorderLayout(20, 60));
 
-        JMenuBar menuBar = addMenuBar();
+        JMenuBar menuBar = addMenuBar(question.getAnswers(), question.getCorrectAnswer());
 
         JLabel questionLabel = new JLabel("", JLabel.CENTER);
 
@@ -214,7 +220,7 @@ public class GuiView extends View {
         mainFrame.validate();
     }
 
-    private JMenuBar addMenuBar() {
+    private JMenuBar addMenuBar(String[] answers, int correctAnswer) {
         JMenuBar menuBar = new JMenuBar();
 
         JMenu optionsMenu = new JMenu("Options");
@@ -254,13 +260,29 @@ public class GuiView extends View {
         aboutItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                displayDialog("<html>You can use one hint only once in the game. You can only use<br/> one hint per question.");
+                displayDialog("<html>You can use one hint only once in the game. You can only use<br/> one hint per question.",
+                        Dialog.NORMAL);
             }
         });
 
         JMenuItem fiftyItem = new JMenuItem("50:50");
         JMenuItem expertItem = new JMenuItem("Phone Expert");
+
         JMenuItem audienceItem = new JMenuItem("Audience Choice");
+        audienceItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String audienceAnswer = Audience.vote(answers, correctAnswer);
+                audienceAnswer = audienceAnswer.replace("\n", "<br/>");
+
+                StringBuilder builder = new StringBuilder();
+                builder.append("<html>");
+                builder.append(audienceAnswer);
+                builder.append("<html/>");
+                displayDialog(builder.toString(), Dialog.AUDIENCE);
+            }
+        });
+
         hintsMenu.add(aboutItem);
         hintsMenu.add(fiftyItem);
         hintsMenu.add(expertItem);
@@ -299,12 +321,19 @@ public class GuiView extends View {
         return builder.toString();
     }
 
-    private void displayDialog(String message) {
+    private void displayDialog(String message, Dialog dialogType) {
         JDialog dialog = new JDialog(mainFrame, "Info", true);
         dialog.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 20));
 
         JLabel label = new JLabel(message, JLabel.CENTER);
-        label.setPreferredSize(new Dimension(400, 40));
+
+        if(dialogType == Dialog.AUDIENCE) {
+            label.setPreferredSize(new Dimension(400, 60));
+        } else if(dialogType == Dialog.EXPERT) {
+            label.setPreferredSize(new Dimension(400, 40));
+        } else {
+            label.setPreferredSize(new Dimension(400, 40));
+        }
 
         JButton okButton = new JButton("Ok");
         styleButton(okButton);
@@ -317,7 +346,15 @@ public class GuiView extends View {
 
         dialog.add(label);
         dialog.add(okButton);
-        dialog.setSize(400, 180);
+
+        if(dialogType == Dialog.AUDIENCE) {
+            dialog.setSize(400, 180);
+        } else if(dialogType == Dialog.EXPERT) {
+            dialog.setSize(400, 180);
+        } else {
+            dialog.setSize(400, 180);
+        }
+
         dialog.setLocationRelativeTo(mainFrame);
         dialog.setVisible(true);
     }
@@ -370,7 +407,7 @@ public class GuiView extends View {
 
     private void checkSelectedAnswer(int answerId, Question question) {
         if(question.checkAnswer(answerId)) {
-            displayDialog("Bravo! This is the correct answer!");
+            displayDialog("Bravo! This is the correct answer!", Dialog.NORMAL);
 
             int questionNumber = quiz.getCurrentQuestionNumber();
             int questionTime = (int) (System.currentTimeMillis() - currentTime) / 1000;
@@ -384,12 +421,12 @@ public class GuiView extends View {
                 Question nextQuestion = quiz.getQuestion();
                 displayQuestionView(nextQuestion);
             } else {
-                displayDialog("Congratulations! You made it to the end!");
+                displayDialog("Congratulations! You made it to the end!", Dialog.NORMAL);
                 // hardcoded name for testing now
                 displayEndView(new Score("Anon", quiz.getType(), pointsCalculator.getPoints()));
             }
         } else {
-            displayDialog("Ooops! Not this time bro!");
+            displayDialog("Ooops! Not this time bro!", Dialog.NORMAL);
             displayEndView(new Score("Anon", quiz.getType(), pointsCalculator.getPoints()));
         }
     }
