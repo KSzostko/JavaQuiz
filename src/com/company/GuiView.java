@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -581,7 +583,19 @@ public class GuiView extends View {
 
             controlPanel.add(leadersButton);
         } else {
-            // @TODO: full ranking button listener
+            rankingButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String rankingPath = (new File("")).getAbsolutePath() + "\\ranking\\ranking.txt";
+
+                    Desktop desktop = Desktop.getDesktop();
+                    try {
+                        desktop.open(new File(rankingPath));
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
 
             menuButton.addActionListener(new ActionListener() {
                 @Override
