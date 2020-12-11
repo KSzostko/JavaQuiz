@@ -90,6 +90,7 @@ public class GuiView extends View {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     quiz = new Quiz(e.getActionCommand());
+                    displayDialog("You can get bonus points if you will answer questions fast enough");
                     displayQuestionView(quiz.getQuestion());
                 }
             });
@@ -288,6 +289,28 @@ public class GuiView extends View {
         builder.append("<html/");
 
         return builder.toString();
+    }
+
+    private void displayDialog(String message) {
+        JDialog dialog = new JDialog(mainFrame, "Info", true);
+        dialog.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 20));
+
+        JLabel label = new JLabel(message, JLabel.CENTER);
+
+        JButton okButton = new JButton("Ok");
+        styleButton(okButton);
+        okButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dialog.setVisible(false);
+            }
+        });
+
+        dialog.add(label);
+        dialog.add(okButton);
+        dialog.setSize(400, 150);
+        dialog.setLocationRelativeTo(mainFrame);
+        dialog.setVisible(true);
     }
 
     private void addAnswersButtons(JPanel controlPanel, Question question) {
